@@ -1,0 +1,6 @@
+*~
+*.swp
+tarballs/
+.stack-work/
+uploads/
+selenium-server-*.jar

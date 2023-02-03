@@ -1,0 +1,95 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.35.0.
+--
+-- see: https://github.com/sol/hpack
+
+name:           get-payslip
+version:        0.1.0.0
+description:    Please see the README on Github at <https://github.com/githubuser/get-payslip#readme>
+homepage:       https://github.com/githubuser/get-payslip#readme
+bug-reports:    https://github.com/githubuser/get-payslip/issues
+author:         Author name here
+maintainer:     example@example.com
+copyright:      2023 Author name here
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    CHANGELOG.md
+
+source-repository head
+  type: git
+  location: https://github.com/githubuser/get-payslip
+
+library
+  exposed-modules:
+      Import
+      Run
+      Scraper
+      Types
+      Util
+  other-modules:
+      Paths_get_payslip
+  hs-source-dirs:
+      src
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  build-depends:
+      aeson
+    , base >=4.11 && <10
+    , conduit
+    , conduit-extra
+    , http-conduit
+    , mtl
+    , rio >=0.1.12.0
+    , rio-orphans
+    , scalpel-core
+    , webdriver
+  default-language: Haskell2010
+
+executable get-payslip-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_get_payslip
+  hs-source-dirs:
+      app
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      aeson
+    , base >=4.11 && <10
+    , conduit
+    , conduit-extra
+    , get-payslip
+    , http-conduit
+    , mtl
+    , optparse-simple
+    , rio >=0.1.12.0
+    , rio-orphans
+    , scalpel-core
+    , webdriver
+  default-language: Haskell2010
+
+test-suite get-payslip-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      UtilSpec
+      Paths_get_payslip
+  hs-source-dirs:
+      test
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      aeson
+    , base >=4.11 && <10
+    , conduit
+    , conduit-extra
+    , get-payslip
+    , hspec
+    , http-conduit
+    , mtl
+    , rio >=0.1.12.0
+    , rio-orphans
+    , scalpel-core
+    , webdriver
+  default-language: Haskell2010
