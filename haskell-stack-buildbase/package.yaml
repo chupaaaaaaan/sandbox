@@ -30,6 +30,7 @@ dependencies:
 - conduit-extra
 - http-conduit
 - mtl
+- optparse-simple
 - resourcet
 - rio
 - rio-orphans
