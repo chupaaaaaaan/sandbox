@@ -3,6 +3,7 @@ package tokyo.chupaaaaaaan.slack;
 import tokyo.chupaaaaaaan.slack.client.GetAllActiveChannels;
 import tokyo.chupaaaaaaan.slack.model.BasicChannel;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,8 +16,9 @@ public class App {
         String token = System.getenv("SLACK_TOKEN");
 
         List<BasicChannel> basicChannels = new GetAllActiveChannels().execute(token).stream()
-            .map(c -> new BasicChannel(c.getId(), c.getName(), c.getNumOfMembers()))
-            .sorted()
+            .filter(c -> c.getName().startsWith("a"))
+            .map(c -> new BasicChannel(c.getName(), c.getNumOfMembers()))
+            .sorted(Comparator.comparingInt(BasicChannel::getNumOfMembers))
             .collect(Collectors.toUnmodifiableList());
 
         basicChannels.forEach(System.out::println);
