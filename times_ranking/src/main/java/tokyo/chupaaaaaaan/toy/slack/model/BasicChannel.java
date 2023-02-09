@@ -1,4 +1,4 @@
-package tokyo.chupaaaaaaan.slack.model;
+package tokyo.chupaaaaaaan.toy.slack.model;
 
 public class BasicChannel {
 

@@ -1,4 +1,4 @@
-package tokyo.chupaaaaaaan.slack;
+package tokyo.chupaaaaaaan.toy.slack;
 
 import static org.junit.Assert.assertTrue;
 

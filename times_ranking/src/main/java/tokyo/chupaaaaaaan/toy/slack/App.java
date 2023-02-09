@@ -1,7 +1,7 @@
-package tokyo.chupaaaaaaan.slack;
+package tokyo.chupaaaaaaan.toy.slack;
 
-import tokyo.chupaaaaaaan.slack.client.GetAllActiveChannels;
-import tokyo.chupaaaaaaan.slack.model.BasicChannel;
+import tokyo.chupaaaaaaan.toy.slack.client.GetAllActiveChannels;
+import tokyo.chupaaaaaaan.toy.slack.model.BasicChannel;
 
 import java.util.Comparator;
 import java.util.List;

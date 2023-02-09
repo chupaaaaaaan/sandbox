@@ -1,4 +1,4 @@
-package tokyo.chupaaaaaaan.slack.client;
+package tokyo.chupaaaaaaan.toy.slack.client;
 
 import com.slack.api.Slack;
 import com.slack.api.methods.SlackApiException;
