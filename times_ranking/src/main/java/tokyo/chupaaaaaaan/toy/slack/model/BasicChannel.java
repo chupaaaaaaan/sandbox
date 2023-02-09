@@ -1,18 +1,21 @@
 package tokyo.chupaaaaaaan.toy.slack.model;
 
+/**
+ * アプリで使用するチャネル情報を格納するクラス
+ */
 public class BasicChannel {
 
-    private String name;
+    private final String id;
 
-    private int numOfMembers;
+    private final int numOfMembers;
 
-    public BasicChannel(String name, int numOfMembers) {
-        this.name = name;
+    public BasicChannel(String id, int numOfMembers) {
+        this.id = id;
         this.numOfMembers = numOfMembers;
     }
 
-    public String getName() {
-        return name;
+    public String getId() {
+        return id;
     }
 
     public int getNumOfMembers() {
@@ -21,6 +24,6 @@ public class BasicChannel {
 
     @Override
     public String toString() {
-        return this.getName();
+        return "<#" + getId() + ">\t: " + getNumOfMembers();
     }
 }

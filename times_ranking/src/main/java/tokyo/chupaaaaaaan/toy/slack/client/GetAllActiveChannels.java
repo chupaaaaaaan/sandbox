@@ -12,8 +12,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+/**
+ * チャネル一覧をリスト形式で取得するためのクラス
+ */
 public class GetAllActiveChannels {
 
+    /**
+     * Slack
+     * @param token Slackトークン
+     * @return チャネルのリスト
+     */
     public List<Conversation> execute(String token) {
 
         Iterable<Conversation> iterable = () -> new ActiveConversations(token);
@@ -25,6 +33,8 @@ public class GetAllActiveChannels {
 
         private final Slack slack = Slack.getInstance();
 
+        private final boolean excludeB;
+
         private final int limitCount;
 
         private final String slackToken;
@@ -34,12 +44,13 @@ public class GetAllActiveChannels {
         private Iterator<Conversation> it;
 
         public ActiveConversations(String slackToken) {
-            this(slackToken, 100);
+            this(slackToken, 100, true);
         }
 
-        public ActiveConversations(String slackToken, int limitCount) {
+        public ActiveConversations(String slackToken, int limitCount, boolean excludeB) {
             this.slackToken = slackToken;
             this.limitCount = limitCount;
+            this.excludeB = excludeB;
             updateConversation(request());
         }
 
@@ -75,11 +86,11 @@ public class GetAllActiveChannels {
         }
 
         private ConversationsListRequest request(String nextCursor) {
-            return ConversationsListRequest.builder().excludeArchived(true).limit(limitCount).cursor(nextCursor).build();
+            return ConversationsListRequest.builder().excludeArchived(excludeB).limit(limitCount).cursor(nextCursor).build();
         }
 
         private ConversationsListRequest request() {
-            return ConversationsListRequest.builder().excludeArchived(true).limit(limitCount).build();
+            return ConversationsListRequest.builder().excludeArchived(excludeB).limit(limitCount).build();
         }
 
         private ConversationsListResponse execRequest(ConversationsListRequest request) {
@@ -94,8 +105,5 @@ public class GetAllActiveChannels {
                 throw new RuntimeException(e);
             }
         }
-
     }
-
-
 }
