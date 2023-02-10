@@ -22,3 +22,30 @@ extra-source-files:
 source-repository head
   type: git
   location: https://github.com/githubuser/haskell-stack-buildbase
+
+library
+  exposed-modules:
+      Lib
+  other-modules:
+      Paths_haskell_stack_buildbase
+  hs-source-dirs:
+      src
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  build-depends:
+      aeson
+    , amazonka
+    , amazonka-core
+    , amazonka-s3
+    , amazonka-sns
+    , base >=4.7 && <5
+    , conduit
+    , conduit-extra
+    , http-conduit
+    , mtl
+    , optparse-simple
+    , resourcet
+    , rio
+    , rio-orphans
+    , scalpel-core
+    , webdriver
+  default-language: Haskell2010
