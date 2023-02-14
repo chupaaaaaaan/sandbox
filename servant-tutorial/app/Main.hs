@@ -1,6 +1,7 @@
 module Main (main) where
 
-import Lib
+-- import Lib
+import Server
 
 main :: IO ()
-main = startApp
+main = runApp

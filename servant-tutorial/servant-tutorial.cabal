@@ -27,6 +27,7 @@ library
   exposed-modules:
       ApiType
       Lib
+      Server
   other-modules:
       Paths_servant_tutorial
   hs-source-dirs:
@@ -34,8 +35,19 @@ library
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       aeson
+    , attoparsec
     , base >=4.7 && <5
+    , base-compat-batteries
+    , blaze-html
+    , blaze-markup
+    , bytestring
+    , directory
+    , http-media
+    , lucid
+    , mtl
     , servant
+    , servant-server
+    , string-conversions
     , text
     , time
     , wai
@@ -51,9 +63,20 @@ executable servant-tutorial-exe
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
+    , attoparsec
     , base
+    , base-compat-batteries
+    , blaze-html
+    , blaze-markup
+    , bytestring
+    , directory
+    , http-media
+    , lucid
+    , mtl
     , servant
+    , servant-server
     , servant-tutorial
+    , string-conversions
     , text
     , time
     , wai
@@ -70,12 +93,23 @@ test-suite servant-tutorial-test
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
+    , attoparsec
     , base
+    , base-compat-batteries
+    , blaze-html
+    , blaze-markup
+    , bytestring
+    , directory
     , hspec
     , hspec-wai
     , hspec-wai-json
+    , http-media
+    , lucid
+    , mtl
     , servant
+    , servant-server
     , servant-tutorial
+    , string-conversions
     , text
     , time
     , wai

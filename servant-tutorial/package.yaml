@@ -21,9 +21,19 @@ description:         Please see the README on GitHub at <https://github.com/gith
 
 dependencies:
 - base >= 4.7 && < 5
+- base-compat-batteries
 - aeson
+- attoparsec
+- blaze-html
+- blaze-markup
+- bytestring
+- directory
+- http-media
+- lucid
+- mtl
 - servant
-# - servant-server
+- servant-server
+- string-conversions
 - text
 - time
 - wai
