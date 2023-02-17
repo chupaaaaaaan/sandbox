@@ -12,15 +12,16 @@ import java.io.IOException;
  */
 public class PostMessages {
 
-    private final Slack slack = Slack.getInstance();
-
     /**
      * メッセージをチャンネルに投稿する。
      * @param token Slackトークン
      * @param channel 投稿先チャネル
      * @param message 投稿するメッセージ
      */
-    public void execute(String token, String channel, String message) {
+    public static void execute(String token, String channel, String message) {
+
+        final Slack slack = Slack.getInstance();
+
         ChatPostMessageRequest request = ChatPostMessageRequest.builder()
             .channel(channel)
             .text(message)

@@ -22,7 +22,7 @@ public class GetAllActiveChannels {
      * @param token Slackトークン
      * @return チャネルのリスト
      */
-    public List<Conversation> execute(String token) {
+    public static List<Conversation> execute(String token) {
 
         Iterable<Conversation> iterable = () -> new ActiveConversations(token);
 

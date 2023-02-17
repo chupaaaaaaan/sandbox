@@ -28,7 +28,7 @@ public class App {
         StringJoiner sj = new StringJoiner("\n", "今日のtimesユーザ数ランキングはこちら！\n", "");
 
         // チャネル一覧を取得し、ユーザ数の降順に並べ、順に投稿メッセージを構築する
-        new GetAllActiveChannels().execute(token).stream()
+        GetAllActiveChannels.execute(token).stream()
             .filter(c -> c.getName().startsWith(channelNamePrefix))
             .map(c -> new BasicChannel(c.getId(), c.getNumOfMembers()))
             .sorted(Comparator.comparingInt(BasicChannel::getNumOfMembers).reversed())
@@ -37,6 +37,6 @@ public class App {
             .forEach(c -> sj.add(c.toString()));
 
         // メッセージをチャネルに投稿する
-        new PostMessages().execute(token, channel, sj.toString());
+        PostMessages.execute(token, channel, sj.toString());
     }
 }
