@@ -12,10 +12,18 @@ data Options = Options
   { optionsVerbose :: !Bool
   }
 
+data AppWDConfig = AWDConfig
+    { wdHost :: String
+    , wdPort :: Int
+    }
+
+
+
 data App = App
   { appLogFunc :: !LogFunc
   , appProcessContext :: !ProcessContext
   , appOptions :: !Options
+  -- , appWDConfig :: !AppWDConfig
   -- Add other app-specific configuration information here
   }
 

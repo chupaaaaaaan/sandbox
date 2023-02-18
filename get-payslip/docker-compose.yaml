@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  firefox:
+    image: selenium/standalone-firefox:4.8.0-20230210
+    container_name: selenium-standalone-firefox
+
+    ports:
+      - "14444:4444"
+      - "17900:7900"
+
+    shm_size: "2gb"
+
+    networks:
+      - appNetwork
+
+  app:
+    build:
+      context: .
+    container_name: get-payslip-app
+    
+    environment:
+      - GET_PAYSLIP_PASSWORD
+
+    command: sh -c './wait-for selenium-standalone-firefox:4444 -- ./execute'
+
+    depends_on:
+      - firefox
+
+    networks:
+      - appNetwork
+
+    volumes:
+      - ./uploads:/opt/myapp/uploads
+
+networks:
+  appNetwork:
