@@ -13,7 +13,7 @@ RESOLVER_VERSION="$(yq '.resolver' ${STACK_YAML})"
 BASE_IMAGE_NAME=haskell-stack-buildbase
 IMAGE="${BASE_IMAGE_NAME}:${RESOLVER_VERSION}"
 
-SNAPSHOT_DIR=./snapshots
+SNAPSHOT_DIR=snapshots
 SNAPSHOT_ORIG_DIR="${SNAPSHOT_DIR}-orig"
 
 ## buildbaseイメージがあれば、事前にsnapshotを取り出す
