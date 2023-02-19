@@ -21,6 +21,9 @@ services:
     
     environment:
       - GET_PAYSLIP_PASSWORD
+      - "GET_PAYSLIP_HOST=firefox"
+      - "GET_PAYSLIP_PORT=4444"
+      - "GET_PAYSLIP_DOWNLOAD_BASEDIR=./"
 
     command: sh -c './wait-for selenium-standalone-firefox:4444 -- ./execute'
 

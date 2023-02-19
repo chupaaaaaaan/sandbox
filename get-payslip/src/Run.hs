@@ -29,13 +29,13 @@ run = do
         password <- mPassword !? "Environment variable `GET_PAYSLIP_PASSWORD' is not set."
         host <- mHost !? "Environment variable `GET_PAYSLIP_HOST' is not set."
         port <- mPort !? "Environment variable `GET_PAYSLIP_PORT' is not set or is not Int."
-        downloadDir <- mDownloadBaseDir !? "Environment variable `GET_PAYSLIP_DOWNLOAD_BASEDIR' is not set or is not Int."
+        downloadBaseDir <- mDownloadBaseDir !? "Environment variable `GET_PAYSLIP_DOWNLOAD_BASEDIR' is not set or is not Int."
         mContent <- liftIO $ scrapeContent <$> fetchContentPage host port password
         content <- mContent !? "Cannot get the target content from the page."
 
         logInfo $ display content._url
         -- logInfo $ display content._title
-        liftIO $ downloadZip downloadDir content._url
+        liftIO $ downloadZip downloadBaseDir content._url
 
     where
         Nothing !? e = ContT $ const $ logWarn e
