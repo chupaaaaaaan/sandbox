@@ -1,6 +1,6 @@
+{-# LANGUAGE ImportQualifiedPost #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE NoImplicitPrelude #-}
-{-# LANGUAGE ImportQualifiedPost #-}
 
 module Util (
     fetchContentPage,

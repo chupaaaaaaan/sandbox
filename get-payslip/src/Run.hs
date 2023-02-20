@@ -1,20 +1,19 @@
-{-# LANGUAGE NoImplicitPrelude #-}
-{-# LANGUAGE NoFieldSelectors #-}
 {-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE OverloadedRecordDot #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE NoFieldSelectors #-}
+{-# LANGUAGE NoImplicitPrelude #-}
 
 module Run (run) where
 
+import Control.Monad.Cont
 import Import
+import RIO.Process
 import Scraper
 import Util
-import RIO.Process
-import Control.Monad.Cont
 
 run :: (HasLogFunc env, HasProcessContext env) => RIO env ()
 run = do
-
     mAppConfig <- getAppConfig
     (`runContT` return) $ do
         appConfig <- mAppConfig !? "Environment variable `GET_PAYSLIP_PASSWORD' is not set."
@@ -28,7 +27,6 @@ run = do
         logInfo $ display content._url
         -- logInfo $ display content._title
         liftIO $ downloadZip baseDir content._url
-
-    where
-        Nothing !? e = ContT $ const $ logWarn e
-        Just a  !? _ = ContT ($ a)
+  where
+    Nothing !? e = ContT $ const $ logWarn e
+    Just a !? _ = ContT ($ a)

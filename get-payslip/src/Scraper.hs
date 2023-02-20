@@ -1,11 +1,11 @@
-{-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE OverloadedStrings #-}
-module Scraper (scrapeContent, Content(..))  where
+{-# LANGUAGE NoImplicitPrelude #-}
+
+module Scraper (scrapeContent, Content (..)) where
 
 import Import
+import RIO.List.Partial qualified as L'
 import Text.HTML.Scalpel.Core
-import qualified RIO.List.Partial as L'
-
 
 scrapeContent :: Text -> Maybe Content
 scrapeContent page = scrapeStringLike page contentScraper
@@ -17,6 +17,7 @@ contentScraper = chroot ("div" @: ["itemProp" @= "mainEntityOfPage"]) $ do
     return $ Content url $ paragraphs L'.!! 1
 
 data Content = Content
-               { _url :: !Text
-               , _title :: !Text
-               } deriving (Show)
+    { _url :: !Text
+    , _title :: !Text
+    }
+    deriving (Show)
