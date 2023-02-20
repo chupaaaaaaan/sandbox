@@ -1,31 +1,30 @@
-{-# LANGUAGE NoImplicitPrelude #-}
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE UndecidableInstances #-}
-{-# LANGUAGE ImportQualifiedPost #-}
-{-# LANGUAGE StandaloneDeriving #-}
-{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DerivingVia #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE ImportQualifiedPost #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE StrictData #-}
+{-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE NoImplicitPrelude #-}
 
 module Types (
     App (..),
     Options (..),
-    AppConfig (..),
+    AppConfig_ (..),
     getAppConfig,
 ) where
 
 import Barbies
 import Barbies.Bare
 import Data.Monoid
+import Data.Monoid.Generic
 import RIO
 import RIO.Map qualified as Map
 import RIO.Process
 import RIO.Text
-import Data.Semigroup.Generic
-import Data.Monoid.Generic
 
-data AppConfig t f = AppConfig_
+data AppConfig_ t f = AppConfig_
     { targetUrlPassword :: Wear t f Text
     , webdriverHost :: Wear t f String
     , webdriverPort :: Wear t f Int
@@ -33,15 +32,18 @@ data AppConfig t f = AppConfig_
     }
     deriving (Generic)
 
-instance FunctorB (AppConfig Covered)
-instance TraversableB (AppConfig Covered)
-instance ConstraintsB (AppConfig Covered)
-instance BareB AppConfig
+instance FunctorB (AppConfig_ Covered)
+instance TraversableB (AppConfig_ Covered)
+instance ConstraintsB (AppConfig_ Covered)
+instance BareB AppConfig_
 
-deriving via GenericSemigroup (AppConfig Covered f) instance AllBF Semigroup f (AppConfig Covered) => Semigroup (AppConfig Covered f)
-deriving via GenericMonoid (AppConfig Covered f) instance AllBF Monoid f (AppConfig Covered) => Monoid (AppConfig Covered f)
+deriving via GenericSemigroup (AppConfig_ Covered f) instance AllBF Semigroup f (AppConfig_ Covered) => Semigroup (AppConfig_ Covered f)
+deriving via GenericMonoid (AppConfig_ Covered f) instance AllBF Monoid f (AppConfig_ Covered) => Monoid (AppConfig_ Covered f)
 
-defaultAppConfig :: RIO env (AppConfig Covered Last)
+type AppConfigPartial = AppConfig_ Covered Last
+type AppConfig = AppConfig_ Bare Identity
+
+defaultAppConfig :: RIO env AppConfigPartial
 defaultAppConfig =
     return $
         AppConfig_
@@ -51,7 +53,7 @@ defaultAppConfig =
             , downloadBaseDir = Last (Just "./")
             }
 
-appConfigFromEnvironment :: HasProcessContext env => RIO env (AppConfig Covered Last)
+appConfigFromEnvironment :: HasProcessContext env => RIO env AppConfigPartial
 appConfigFromEnvironment = do
     envMap <- view envVarsL
     let lu = flip Map.lookup envMap
@@ -63,7 +65,7 @@ appConfigFromEnvironment = do
             , downloadBaseDir = Last $ lu "GET_PAYSLIP_DOWNLOAD_BASEDIR" <&> unpack
             }
 
-getAppConfig :: HasProcessContext env => RIO env (Maybe (AppConfig Bare Identity))
+getAppConfig :: HasProcessContext env => RIO env (Maybe AppConfig)
 getAppConfig = do
     fromDefault <- defaultAppConfig
     fromEnvironment <- appConfigFromEnvironment
