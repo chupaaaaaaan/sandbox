@@ -26,8 +26,10 @@ dependencies:
 - amazonka-core
 - amazonka-s3
 - amazonka-sns
+- barbies
 - conduit
 - conduit-extra
+- generic-monoid
 - http-conduit
 - mtl
 - optparse-simple
