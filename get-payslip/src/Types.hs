@@ -63,12 +63,12 @@ appConfigFromEnvironment = do
             , downloadBaseDir = Last $ lu "GET_PAYSLIP_DOWNLOAD_BASEDIR" <&> unpack
             }
 
-getAppConfig :: HasProcessContext env => RIO env (Maybe (AppConfig Covered Identity))
+getAppConfig :: HasProcessContext env => RIO env (Maybe (AppConfig Bare Identity))
 getAppConfig = do
     fromDefault <- defaultAppConfig
     fromEnvironment <- appConfigFromEnvironment
 
-    return $ getLast $ bsequence' $ fromDefault <> fromEnvironment
+    return . getLast . fmap bstrip . bsequence' $ fromDefault <> fromEnvironment
 
 -- | Command line arguments
 data Options = Options

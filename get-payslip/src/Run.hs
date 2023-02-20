@@ -18,10 +18,10 @@ run = do
     mAppConfig <- getAppConfig
     (`runContT` return) $ do
         appConfig <- mAppConfig !? "Environment variable `GET_PAYSLIP_PASSWORD' is not set."
-        let password = runIdentity appConfig.targetUrlPassword
-            host = runIdentity appConfig.webdriverHost
-            port = runIdentity appConfig.webdriverPort
-            baseDir = runIdentity appConfig.downloadBaseDir
+        let password = appConfig.targetUrlPassword
+            host = appConfig.webdriverHost
+            port = appConfig.webdriverPort
+            baseDir = appConfig.downloadBaseDir
         mContent <- liftIO $ scrapeContent <$> fetchContentPage host port password
         content <- mContent !? "Cannot get the target content from the page."
 
