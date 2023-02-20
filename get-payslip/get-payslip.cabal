@@ -37,9 +37,11 @@ library
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       aeson
+    , barbies
     , base >=4.11 && <10
     , conduit
     , conduit-extra
+    , generic-monoid
     , http-conduit
     , mtl
     , rio >=0.1.12.0
@@ -57,9 +59,11 @@ executable get-payslip-exe
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
+    , barbies
     , base >=4.11 && <10
     , conduit
     , conduit-extra
+    , generic-monoid
     , get-payslip
     , http-conduit
     , mtl
@@ -81,9 +85,11 @@ test-suite get-payslip-test
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
+    , barbies
     , base >=4.11 && <10
     , conduit
     , conduit-extra
+    , generic-monoid
     , get-payslip
     , hspec
     , http-conduit
