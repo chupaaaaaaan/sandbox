@@ -8,7 +8,6 @@ module Run (run) where
 
 import Control.Monad.Cont
 import Import
-import RIO.Process
 import Scraper
 import Util
 

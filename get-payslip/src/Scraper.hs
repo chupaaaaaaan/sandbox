@@ -1,9 +1,10 @@
+{-# LANGUAGE ImportQualifiedPost #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 
 module Scraper (scrapeContent, Content (..)) where
 
-import Import
+import RIO
 import RIO.List.Partial qualified as L'
 import Text.HTML.Scalpel.Core
 
