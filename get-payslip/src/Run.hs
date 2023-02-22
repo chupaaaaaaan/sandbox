@@ -25,7 +25,7 @@ run = do
 
         logInfo $ display content._url
         -- logInfo $ display content._title
-        liftIO $ downloadZip baseDir content._url
+        liftIO $ downloadZip baseDir content
   where
     Nothing !? e = ContT $ const $ logWarn e
     Just a !? _ = ContT ($ a)

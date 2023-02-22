@@ -1,3 +1,6 @@
+{-# LANGUAGE DuplicateRecordFields #-}
+{-# LANGUAGE OverloadedRecordDot #-}
+{-# LANGUAGE NoFieldSelectors #-}
 {-# LANGUAGE ImportQualifiedPost #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE NoImplicitPrelude #-}
@@ -11,7 +14,7 @@ module Util (
 import Conduit
 import Data.Aeson
 import Network.HTTP.Simple
-import RIO
+import Import
 import RIO.Directory
 import RIO.FilePath
 import RIO.List qualified as L
@@ -43,12 +46,15 @@ fetchContentPage host port password = runSession config . finallyClose $ do
                     }
             }
 
-downloadZip :: (MonadUnliftIO m, MonadThrow m) => FilePath -> Text -> m ()
-downloadZip baseDir url = runConduitRes $ do
-    let (dname, fname) = urlToFile url
-    req <- parseRequest $ T.unpack url
+downloadZip :: (MonadUnliftIO m, MonadThrow m) => FilePath -> Content -> m ()
+downloadZip baseDir content = runConduitRes $ do
+    let (dname, fname) = urlToFile content._url
+    req <- parseRequest $ T.unpack content._url
     createDirectoryIfMissing True dname
-    httpSource req getResponseBody .| sinkFile (baseDir </> dname </> fname)
+    let basename = takeBaseName fname
+        extension = takeExtension fname
+        filename = basename <> "_" <> T.unpack content._title <> extension
+    httpSource req getResponseBody .| sinkFile (baseDir </> dname </> filename)
 
 urlToFile :: Text -> (FilePath, String)
 urlToFile =

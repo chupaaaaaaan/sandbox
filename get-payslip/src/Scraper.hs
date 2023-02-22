@@ -2,9 +2,9 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 
-module Scraper (scrapeContent, Content (..)) where
+module Scraper (scrapeContent) where
 
-import RIO
+import Import
 import RIO.List.Partial qualified as L'
 import Text.HTML.Scalpel.Core
 
@@ -16,9 +16,3 @@ contentScraper = chroot ("div" @: ["itemProp" @= "mainEntityOfPage"]) $ do
     url <- attr "href" "a"
     paragraphs <- texts "p"
     return $ Content url $ paragraphs L'.!! 1
-
-data Content = Content
-    { _url :: !Text
-    , _title :: !Text
-    }
-    deriving (Show)

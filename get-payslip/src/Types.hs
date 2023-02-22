@@ -11,6 +11,7 @@
 module Types (
     App (..),
     Options (..),
+    Content(..),
     AppConfig_ (..),
     getAppConfig,
 ) where
@@ -71,6 +72,13 @@ getAppConfig = do
     fromEnvironment <- appConfigFromEnvironment
 
     return . getLast . fmap bstrip . bsequence' $ fromDefault <> fromEnvironment
+
+-- | download content
+data Content = Content
+    { _url :: !Text
+    , _title :: !Text
+    }
+    deriving (Show)
 
 -- | Command line arguments
 data Options = Options
