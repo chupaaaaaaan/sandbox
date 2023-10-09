@@ -2,11 +2,10 @@ package tokyo.chupaaaaaaan.toy.slack;
 
 import tokyo.chupaaaaaaan.toy.slack.client.GetAllActiveChannels;
 import tokyo.chupaaaaaaan.toy.slack.client.PostMessages;
-import tokyo.chupaaaaaaan.toy.slack.model.BasicChannel;
+import tokyo.chupaaaaaaan.toy.slack.model.Channel;
 
 import java.util.Comparator;
 import java.util.StringJoiner;
-import java.util.stream.Collectors;
 
 /**
  * アプリケーション実行の起点となるクラス。
@@ -22,19 +21,18 @@ public class App {
         String token = System.getenv("SLACK_TOKEN");
         String channel = System.getenv("SLACK_CHANNEL");
 
-        String channelNamePrefix = "times_";
+        String channelNamePrefix = "a";
         long maxRankingCount = 10;
 
         StringJoiner sj = new StringJoiner("\n", "今日のtimesユーザ数ランキングはこちら！\n", "");
 
         // チャネル一覧を取得し、ユーザ数の降順に並べ、順に投稿メッセージを構築する
-        GetAllActiveChannels.execute(token).stream()
+        GetAllActiveChannels.execute(token)
             .filter(c -> c.getName().startsWith(channelNamePrefix))
-            .map(c -> new BasicChannel(c.getId(), c.getNumOfMembers()))
-            .sorted(Comparator.comparingInt(BasicChannel::getNumOfMembers).reversed())
+            .map(c -> Channel.create(c.getId(), c.getNumOfMembers()))
+            .sorted(Comparator.comparingInt(Channel::getNumOfMembers).reversed())
             .limit(maxRankingCount)
-            .collect(Collectors.toUnmodifiableList())
-            .forEach(c -> sj.add(c.toString()));
+            .forEach(c -> sj.add(c.toMessage()));
 
         // メッセージをチャネルに投稿する
         PostMessages.execute(token, channel, sj.toString());

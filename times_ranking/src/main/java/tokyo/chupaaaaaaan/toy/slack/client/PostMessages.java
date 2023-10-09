@@ -8,7 +8,7 @@ import com.slack.api.methods.response.chat.ChatPostMessageResponse;
 import java.io.IOException;
 
 /**
- * Slackのチャネルにメッセージを投稿するためのクラス
+ * Slackのチャネルにメッセージを投稿するSlackクライアント
  */
 public class PostMessages {
 
@@ -30,10 +30,10 @@ public class PostMessages {
         try {
             ChatPostMessageResponse response = slack.methods(token).chatPostMessage(request);
             if (!response.isOk()) {
-                throw new RuntimeException(response.getError());
+                throw new IllegalStateException(response.getError());
             }
         } catch (SlackApiException | IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 }
