@@ -14,40 +14,42 @@ import java.util.stream.StreamSupport;
 /**
  * チャネル一覧を{@link Stream}形式で取得するSlackクライアント
  */
-public class GetAllActiveChannels {
+public class ActiveChannels {
+
+    private final Iterable<Conversation> iterable;
+
+    public ActiveChannels(String token) {
+        this.iterable = () -> new ActiveChannelIterator(token);
+    }
 
     /**
      * Slackチャネルを取得する。
-     * @param token Slackトークン
      * @return チャネルのStream
      */
-    public static Stream<Conversation> execute(String token) {
-
-        Iterable<Conversation> iterable = () -> new ActiveConversations(token);
-
+    public Stream<Conversation> get() {
         return StreamSupport.stream(iterable.spliterator(), false);
     }
 
-    static class ActiveConversations implements Iterator<Conversation> {
+    private static class ActiveChannelIterator implements Iterator<Conversation> {
 
         private final Slack slack = Slack.getInstance();
+
+        private final String token;
 
         private final boolean excludeB;
 
         private final int limitCount;
 
-        private final String slackToken;
-
         private String nextCursor;
 
         private Iterator<Conversation> it;
 
-        public ActiveConversations(String slackToken) {
-            this(slackToken, 100, true);
+        public ActiveChannelIterator(String token) {
+            this(token, 100, true);
         }
 
-        public ActiveConversations(String slackToken, int limitCount, boolean excludeB) {
-            this.slackToken = slackToken;
+        public ActiveChannelIterator(String token, int limitCount, boolean excludeB) {
+            this.token = token;
             this.limitCount = limitCount;
             this.excludeB = excludeB;
         }
@@ -83,7 +85,7 @@ public class GetAllActiveChannels {
             it = response.getChannels().iterator();
             nextCursor = response.getResponseMetadata().getNextCursor();
             if (!it.hasNext() && !nextCursor.isEmpty()) {
-                throw new RuntimeException("Invalid status: nextCursor is not empty and conservations is empty.");
+                throw new IllegalStateException("Invalid status: nextCursor is not empty and conservations is empty.");
             }
         }
 
@@ -97,7 +99,7 @@ public class GetAllActiveChannels {
 
         private ConversationsListResponse execRequest(ConversationsListRequest request) {
             try {
-                ConversationsListResponse response = slack.methods(slackToken).conversationsList(request);
+                ConversationsListResponse response = slack.methods(token).conversationsList(request);
                 if (response.isOk()) {
                     return response;
                 } else {

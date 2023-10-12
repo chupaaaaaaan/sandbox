@@ -22,7 +22,7 @@ mvn clean compile
 3. 以下のコマンドを実行する。
 
 ```
-SLACK_CHANNEL=<投稿先のChannel ID> SLACK_TOKEN=<トークン> mvn exec:java -Dexec.cleanupDaemonThreads=false -Dexec.mainClass=tokyo.chupaaaaaaan.toy.slack.App
+SLACK_CHANNEL=<投稿先のChannel ID> SLACK_TOKEN=<トークン> mvn exec:java -Dexec.cleanupDaemonThreads=false -Dexec.mainClass=tokyo.chupaaaaaaan.toy.slack.app.App
 ```
 
 ## 残作業
