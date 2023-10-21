@@ -1,31 +1,40 @@
 # times_ranking
 
-## ビルド
+## 環境
+- Java17
 
+## ビルド方法
 ```
-mvn clean compile
+mvn clean package
 ```
 
-## 実行方法
+## 実行方法（ローカル）
 
 1. Slackでアプリを作成し、ワークスペースにアプリをインストールする。  
-トークンは、botトークンでのみ動作確認しています。
-トークンに必要なスコープは以下です。
-
-- `channels:read`
-- `groups:read`
-- `chat:write`
-
-詳細は省略します。
-
+   トークンは、botトークンでのみ動作確認しています。 トークンに必要なスコープは以下です（詳細は省略します）。
+   - `channels:read`
+   - `groups:read`
+   - `chat:write`
 2. 投稿先のチャネルに、アプリを追加する。
 3. 以下のコマンドを実行する。
+   ```
+   SLACK_TOKEN=<トークン> java -jar target/times_ranking.jar
+   ```
 
-```
-SLACK_CHANNEL=<投稿先のChannel ID> SLACK_TOKEN=<トークン> mvn exec:java -Dexec.cleanupDaemonThreads=false -Dexec.mainClass=tokyo.chupaaaaaaan.toy.slack.app.App
-```
+## 実行方法（AWS Lambda)
+実行方法（ローカル）の1,2は実施済みとします。
 
-## 残作業
-
-- [ ] JARパッケージにする
-- [ ] どこかのプラットフォームにデプロイする手順を整える
+1. AWS LambdaにJava17で関数を作成する。
+2. `SLACK_TOKEN`という名前でトークンを環境変数に設定する（環境変数は暗号化する）。
+3. `target/times_ranking.jar` をデプロイする。
+4. 以下のフォーマットでテストパラメータを作成する（パラメータの値は適宜変更する）。
+   ```json
+   {
+     "channelId": "Cxxxxxxxxxx",
+     "channelNamePattern": ".*",
+     "maxRankingCount": 10,
+     "title": "title message",
+     "rowPattern": "rank: $rank$, id: $id$, numOfMembers: $numOfMembers$"
+   }
+   ```
+5. テストを実行する。
