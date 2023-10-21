@@ -8,7 +8,7 @@ import com.slack.api.methods.response.chat.ChatPostMessageResponse;
 import java.io.IOException;
 
 /**
- * Slackのチャネルにメッセージを投稿するSlackクライアント
+ * Slackのチャネルにメッセージを投稿するSlackクライアント。
  */
 public class ChatMessages {
 

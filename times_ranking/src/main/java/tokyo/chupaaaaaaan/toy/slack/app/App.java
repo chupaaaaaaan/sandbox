@@ -3,52 +3,57 @@ package tokyo.chupaaaaaaan.toy.slack.app;
 import tokyo.chupaaaaaaan.toy.slack.client.ActiveChannels;
 import tokyo.chupaaaaaaan.toy.slack.client.ChatMessages;
 import tokyo.chupaaaaaaan.toy.slack.model.Channel;
+import tokyo.chupaaaaaaan.toy.slack.model.Message;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.StringJoiner;
 import java.util.regex.Pattern;
 
 /**
- * アプリケーション実行の起点となるクラス。
- * 小さいアプリであるため、アプリのロジックもこのクラスに記載している。
- * Slackへの接続を伴う処理を実行するクラスはclientパッケージへ切り出している。
+ * アプリケーションのメイン処理。
+ * <p>
  * 注意：このアプリケーションは基本的なアプリの設定を利用しており、
  * アプリをインストールしたワークスペースのみで使用することを想定している。
- * そのため、情報は当該ワークスペースのもののみ取得・投稿は当該ワークスペースに限られる。
+ * そのため、情報は当該ワークスペースからのみ取得され、投稿は当該ワークスペース向けに限られる。
  */
 public class App {
 
     private final ActiveChannels activeChannels;
     private final ChatMessages chatMessages;
-    private final String channelId;
-    private final String channelNamePattern;
-    private final long maxRankingCount;
 
     public App(ActiveChannels activeChannels,
-               ChatMessages chatMessages,
-               String channelId,
-               String channelNamePattern,
-               long maxRankingCount) {
+               ChatMessages chatMessages) {
         this.activeChannels = activeChannels;
         this.chatMessages = chatMessages;
-        this.channelId = channelId;
-        this.channelNamePattern = channelNamePattern;
-        this.maxRankingCount = maxRankingCount;
     }
 
-    public void execute() {
+    public void execute(AppParams params) {
 
-        StringJoiner sj = new StringJoiner("\n", "今日のtimesユーザ数ランキングはこちら！\n", "");
+        String title = params.title();
+        StringJoiner sj = new StringJoiner("\n", title + "\n", "");
 
-        // チャネル一覧を取得し、ユーザ数の降順に並べ、順に投稿メッセージを構築する
-        activeChannels.get()
+        // チャネル一覧を取得し、ユーザ数の降順に並べる
+        String channelNamePattern = params.channelNamePattern();
+        long maxRankingCount = params.maxRankingCount();
+        List<Channel> channels = activeChannels.get().stream()
             .filter(conversation -> Pattern.matches(channelNamePattern, conversation.getName()))
             .map(conversation -> Channel.create(conversation.getId(), conversation.getNumOfMembers()))
             .sorted(Comparator.comparingInt(Channel::getNumOfMembers).reversed())
-            .limit(maxRankingCount)
-            .forEach(channel -> sj.add(channel.toMessage()));
+            .limit(maxRankingCount).toList();
+
+        // メッセージを構築する
+        String rowPattern = params.rowPattern();
+        for (int i = 0; i < channels.size(); i++) {
+            sj.add(Message.newMessage(rowPattern)
+                    .rank(i+1)
+                    .id(channels.get(i).getId())
+                    .numOfMembers(channels.get(i).getNumOfMembers())
+                    .build());
+        }
 
         // メッセージをチャネルに投稿する
+        String channelId = params.channelId();
         chatMessages.post(channelId, sj.toString());
     }
 }

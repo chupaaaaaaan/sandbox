@@ -1,7 +1,7 @@
 package tokyo.chupaaaaaaan.toy.slack.model;
 
 /**
- * アプリで使用するチャネル情報を格納するクラス
+ * アプリで使用するチャネル情報を格納するクラス。
  */
 public class Channel {
 
@@ -20,10 +20,6 @@ public class Channel {
 
     public int getNumOfMembers() {
         return numOfMembers;
-    }
-
-    public String toMessage() {
-        return "<#" + getId() + ">\t: " + getNumOfMembers();
     }
 
     public static Builder newChannel(String id, int numOfMembers) {

@@ -8,6 +8,7 @@ import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.util.Base64;
 import tokyo.chupaaaaaaan.toy.slack.app.App;
+import tokyo.chupaaaaaaan.toy.slack.app.AppParams;
 import tokyo.chupaaaaaaan.toy.slack.client.ActiveChannels;
 import tokyo.chupaaaaaaan.toy.slack.client.ChatMessages;
 
@@ -16,26 +17,24 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Handler implements RequestHandler<Handler.AppParams, Void> {
-
-    private static final String token = decryptKey();
+/**
+ * AWS Lambda環境における、アプリケーション実行の起点となるクラス。
+ */
+public class Handler implements RequestHandler<AppParams, Void> {
 
     @Override
     public Void handleRequest(AppParams event, Context context)
     {
+        final String token = decryptKey();
+
         LambdaLogger logger = context.getLogger();
         logger.log("EVENT TYPE: " + event.getClass());
 
         ActiveChannels activeChannels = new ActiveChannels(token);
         ChatMessages chatMessages = new ChatMessages(token);
+        App app = new App(activeChannels, chatMessages);
 
-        String channelId = event.channelId();
-        String channelNamePrefix = event.channelNamePattern();
-        long maxRankingCount = event.maxRankingCount();
-
-        App app = new App(activeChannels, chatMessages, channelId, channelNamePrefix, maxRankingCount);
-
-        app.execute();
+        app.execute(event);
 
         return null;
     }
@@ -55,6 +54,4 @@ public class Handler implements RequestHandler<Handler.AppParams, Void> {
         ByteBuffer plainTextKey = client.decrypt(request).getPlaintext();
         return new String(plainTextKey.array(), StandardCharsets.UTF_8);
     }
-
-    public record AppParams(String channelId, String channelNamePattern, long maxRankingCount) {}
 }

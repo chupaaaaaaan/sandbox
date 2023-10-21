@@ -7,107 +7,63 @@ import com.slack.api.methods.response.conversations.ConversationsListResponse;
 import com.slack.api.model.Conversation;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
- * チャネル一覧を{@link Stream}形式で取得するSlackクライアント
+ * チャネル一覧を{@link List}形式で取得するSlackクライアント。
  */
 public class ActiveChannels {
 
-    private final Iterable<Conversation> iterable;
+    private final String token;
 
     public ActiveChannels(String token) {
-        this.iterable = () -> new ActiveChannelIterator(token);
+        this.token = token;
     }
 
     /**
      * Slackチャネルを取得する。
-     * @return チャネルのStream
+     * @return チャネルのList
      */
-    public Stream<Conversation> get() {
-        return StreamSupport.stream(iterable.spliterator(), false);
+    public List<Conversation> get() {
+        return getAllConversation();
     }
 
-    private static class ActiveChannelIterator implements Iterator<Conversation> {
+    private List<Conversation> getAllConversation() {
+        List<Conversation> result = new ArrayList<>();
+        String nextCursor = "";
 
-        private final Slack slack = Slack.getInstance();
-
-        private final String token;
-
-        private final boolean excludeB;
-
-        private final int limitCount;
-
-        private String nextCursor;
-
-        private Iterator<Conversation> it;
-
-        public ActiveChannelIterator(String token) {
-            this(token, 100, true);
-        }
-
-        public ActiveChannelIterator(String token, int limitCount, boolean excludeB) {
-            this.token = token;
-            this.limitCount = limitCount;
-            this.excludeB = excludeB;
-        }
-
-        @Override
-        public boolean hasNext() {
-            if(it == null) {
-                updateConversation(request());
-            }
-
-            // リストに要素がまだあるなら、true
-            if (it.hasNext()) {
-                return true;
-            }
-
-            // 要素がなく、次ページも存在しないなら、false
-            if (nextCursor.isEmpty()) {
-                return false;
-            }
-
-            // 上記いずれでもなければ、リストを再取得し、hasNext()
-            updateConversation(request(nextCursor));
-            return it.hasNext();
-        }
-
-        @Override
-        public Conversation next() {
-            return it.next();
-        }
-
-        private void updateConversation(ConversationsListRequest request) {
-            ConversationsListResponse response = execRequest(request);
-            it = response.getChannels().iterator();
+        do {
+            ConversationsListResponse response = execRequest(request(nextCursor));
+            result.addAll(response.getChannels());
             nextCursor = response.getResponseMetadata().getNextCursor();
-            if (!it.hasNext() && !nextCursor.isEmpty()) {
-                throw new IllegalStateException("Invalid status: nextCursor is not empty and conservations is empty.");
+        } while (!nextCursor.isEmpty());
+
+        return Collections.unmodifiableList(result);
+    }
+
+    private ConversationsListRequest request(String nextCursor) {
+        ConversationsListRequest.ConversationsListRequestBuilder builder =
+                ConversationsListRequest.builder().excludeArchived(true).limit(100);
+        if (!nextCursor.isEmpty()) {
+            builder = builder.cursor(nextCursor);
+        }
+        return builder.build();
+    }
+
+    private ConversationsListResponse execRequest(ConversationsListRequest request) {
+        final Slack slack = Slack.getInstance();
+
+        try {
+            ConversationsListResponse response = slack.methods(token).conversationsList(request);
+            if (response.isOk()) {
+                return response;
+            } else {
+                throw new IllegalStateException(response.getError());
             }
-        }
-
-        private ConversationsListRequest request(String nc) {
-            return ConversationsListRequest.builder().excludeArchived(excludeB).limit(limitCount).cursor(nc).build();
-        }
-
-        private ConversationsListRequest request() {
-            return ConversationsListRequest.builder().excludeArchived(excludeB).limit(limitCount).build();
-        }
-
-        private ConversationsListResponse execRequest(ConversationsListRequest request) {
-            try {
-                ConversationsListResponse response = slack.methods(token).conversationsList(request);
-                if (response.isOk()) {
-                    return response;
-                } else {
-                    throw new IllegalStateException(response.getError());
-                }
-            } catch (SlackApiException | IOException e) {
-                throw new IllegalStateException(e);
-            }
+        } catch (SlackApiException | IOException e) {
+            throw new IllegalStateException(e);
         }
     }
 }
