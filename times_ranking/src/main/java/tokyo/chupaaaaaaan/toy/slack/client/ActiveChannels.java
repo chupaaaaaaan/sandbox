@@ -47,7 +47,7 @@ public class ActiveChannels {
         ConversationsListRequest.ConversationsListRequestBuilder builder =
                 ConversationsListRequest.builder().excludeArchived(true).limit(100);
         if (!nextCursor.isEmpty()) {
-            builder = builder.cursor(nextCursor);
+            return builder.cursor(nextCursor).build();
         }
         return builder.build();
     }

@@ -1,6 +1,5 @@
 package tokyo.chupaaaaaaan.toy.slack.app;
 
-import com.slack.api.model.Conversation;
 import tokyo.chupaaaaaaan.toy.slack.client.ActiveChannels;
 import tokyo.chupaaaaaaan.toy.slack.client.ChatMessages;
 import tokyo.chupaaaaaaan.toy.slack.model.Channel;
@@ -31,44 +30,37 @@ public class App {
 
     public void execute(AppParams params) {
 
-        String title = params.title();
-        StringJoiner sj = new StringJoiner("\n", title + "\n", "");
-
         // チャネル一覧を取得し、ユーザ数の降順に並べる
-        String channelNamePattern = params.channelNamePattern();
         List<Channel> channels = activeChannels.get().stream()
-            .filter(conversation -> Pattern.matches(channelNamePattern, conversation.getName()))
+            .filter(conversation -> Pattern.matches(params.channelNamePattern(), conversation.getName()))
             .map(conversation -> Channel.create(conversation.getId(), conversation.getNumOfMembers()))
             .sorted(Comparator.comparingInt(Channel::getNumOfMembers).reversed()).toList();
 
         // メッセージを構築する
-        String rowPattern = params.rowPattern();
-        long maxRankingCount = params.maxRankingCount();
-
-        long previousCount = -1;
-        int previousRank = -1;
+        StringJoiner sj = new StringJoiner("\n", params.title() + "\n", "");
+        long previousNumOfMembers = -1;
+        int previousRankingCount = -1;
         for (int i = 0; i < channels.size(); i++) {
             Channel channelInfo = channels.get(i);
-            long currentCount = channelInfo.getNumOfMembers();
+            long numOfMembers = channelInfo.getNumOfMembers();
 
             // 一つ前と同じユーザ数の場合は同率順位とする
-            int currentRank = previousCount == currentCount ? previousRank : i + 1;
+            int rankingCount = previousNumOfMembers == numOfMembers ? previousRankingCount : i + 1;
 
             // 指定したランキングより大きくなったら抜ける
-            if (currentRank > maxRankingCount) break;
+            if (rankingCount > params.maxRankingCount()) break;
 
-            sj.add(Message.newMessage(rowPattern)
-                    .rank(currentRank)
+            sj.add(Message.newMessage(params.rowPattern())
+                    .rank(rankingCount)
                     .id(channelInfo.getId())
-                    .numOfMembers(currentCount)
+                    .numOfMembers(numOfMembers)
                     .build());
 
-            previousCount = currentCount;
-            previousRank = currentRank;
+            previousNumOfMembers = numOfMembers;
+            previousRankingCount = rankingCount;
         }
 
         // メッセージをチャネルに投稿する
-        String channelId = params.channelId();
-        chatMessages.post(channelId, sj.toString());
+        chatMessages.post(params.channelId(), sj.toString());
     }
 }
