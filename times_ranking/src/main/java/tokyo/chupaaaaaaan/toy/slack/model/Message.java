@@ -25,7 +25,7 @@ public class Message {
         return this;
     }
 
-    public Message numOfMembers(int val) {
+    public Message numOfMembers(long val) {
         message = message.replace("$numOfMembers$", String.valueOf(val));
         return this;
     }

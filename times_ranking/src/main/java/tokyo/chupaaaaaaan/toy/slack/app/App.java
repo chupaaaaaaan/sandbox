@@ -1,5 +1,6 @@
 package tokyo.chupaaaaaaan.toy.slack.app;
 
+import com.slack.api.model.Conversation;
 import tokyo.chupaaaaaaan.toy.slack.client.ActiveChannels;
 import tokyo.chupaaaaaaan.toy.slack.client.ChatMessages;
 import tokyo.chupaaaaaaan.toy.slack.model.Channel;
@@ -35,21 +36,35 @@ public class App {
 
         // チャネル一覧を取得し、ユーザ数の降順に並べる
         String channelNamePattern = params.channelNamePattern();
-        long maxRankingCount = params.maxRankingCount();
         List<Channel> channels = activeChannels.get().stream()
             .filter(conversation -> Pattern.matches(channelNamePattern, conversation.getName()))
             .map(conversation -> Channel.create(conversation.getId(), conversation.getNumOfMembers()))
-            .sorted(Comparator.comparingInt(Channel::getNumOfMembers).reversed())
-            .limit(maxRankingCount).toList();
+            .sorted(Comparator.comparingInt(Channel::getNumOfMembers).reversed()).toList();
 
         // メッセージを構築する
         String rowPattern = params.rowPattern();
+        long maxRankingCount = params.maxRankingCount();
+
+        long previousCount = -1;
+        int previousRank = -1;
         for (int i = 0; i < channels.size(); i++) {
+            Channel channelInfo = channels.get(i);
+            long currentCount = channelInfo.getNumOfMembers();
+
+            // 一つ前と同じユーザ数の場合は同率順位とする
+            int currentRank = previousCount == currentCount ? previousRank : i + 1;
+
+            // 指定したランキングより大きくなったら抜ける
+            if (currentRank > maxRankingCount) break;
+
             sj.add(Message.newMessage(rowPattern)
-                    .rank(i+1)
-                    .id(channels.get(i).getId())
-                    .numOfMembers(channels.get(i).getNumOfMembers())
+                    .rank(currentRank)
+                    .id(channelInfo.getId())
+                    .numOfMembers(currentCount)
                     .build());
+
+            previousCount = currentCount;
+            previousRank = currentRank;
         }
 
         // メッセージをチャネルに投稿する

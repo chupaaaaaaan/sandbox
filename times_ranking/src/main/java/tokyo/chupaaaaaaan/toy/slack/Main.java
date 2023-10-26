@@ -17,7 +17,7 @@ public class Main {
 
         AppParams params = new AppParams(
                 "C010M580R16",
-                "^a.*",
+                "^.*",
                 10,
                 "今週のtimesユーザ数ランキングはこちら！",
                 "$rank$位: $id$\t 参加者数: $numOfMembers$人");
