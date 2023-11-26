@@ -1,25 +1,21 @@
-{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE OverloadedRecordDot #-}
 
 module Run (run) where
 
 import Import
-import Network.HTTP.Simple
-import Parser.JepContent
-import qualified Parser.Jdk9Url as Jdk
-import qualified RIO.Text as T
-import Text.HTML.Scalpel.Core
-import Util
+import Service.GetContent
+import Service.Translate
+import Service.UrlSource
+import Service.Output
 
 run :: RIO App ()
 run = do
-    content <- fetchHtml Jdk.jdkUrl
+    env <- ask
+    let targetJdk = env.appOptions.optionsJdk
+        outputFilePath = env.appOptions.optionsOutputFilePath
 
-    let maybeSourceUrls = scrapeStringLike content Jdk.jepUrlParser
-
-    case maybeSourceUrls of
-        Nothing -> error "URL is empty."
-        Just sourceUrls -> do
-            forM_ sourceUrls $ \su -> do
-                jepContent <- fetchHtml $ parseRequest_ $ T.unpack su
-                logInfo . displayShow $ scrapeStringLike jepContent jepParser
+    urlSourceOf targetJdk
+        >>= jepContents targetJdk
+        >>= translate2Ja
+        >>= writeToCsv outputFilePath

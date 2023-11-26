@@ -1,10 +1,10 @@
-name:                my-crawler
+name:                jep-crawler
 version:             0.1.0.0
-github:              githubuser/my-crawler
+github:              chupaaaaaaan/sandbox/jep-crawler
 license:             BSD-3-Clause
-author:              Author name here
+author:              Takayuki Uchida
 maintainer:          example@example.com
-copyright:           2023 Author name here
+copyright:           2023 Takayuki Uchida
 
 extra-source-files:
 - README.md
@@ -17,13 +17,16 @@ extra-source-files:
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on Github at <https://github.com/githubuser/my-crawler#readme>
+description:         Please see the README on Github at <https://github.com/chupaaaaaaan/sandbox/jep-crawler#readme>
 
 dependencies:
 - base >= 4.11 && < 10
 - rio >= 0.1.12.0
+- aeson
 - attoparsec
 - bytestring
+- cassava
+- http-types
 - http-conduit
 - text
 - scalpel-core
@@ -46,11 +49,11 @@ library:
   source-dirs: src
 
 executables:
-  my-crawler-exe:
+  jep-crawler-exe:
     main:                Main.hs
     source-dirs:         app
     dependencies:
-    - my-crawler
+    - jep-crawler
     - optparse-simple
 
     ghc-options:
@@ -59,11 +62,11 @@ executables:
     - -with-rtsopts=-N
 
 tests:
-  my-crawler-test:
+  jep-crawler-test:
     main:                Spec.hs
     source-dirs:         test
     dependencies:
-    - my-crawler
+    - jep-crawler
     - hspec
 
     ghc-options:
