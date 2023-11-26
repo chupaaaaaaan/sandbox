@@ -28,6 +28,7 @@ data Options = Options
     { optionsVerbose :: !Bool
     , optionsOutputFilePath :: !String
     , optionsJdk :: !Jdk
+    , optionsDoTranslate :: !Bool
     }
 
 data App = App

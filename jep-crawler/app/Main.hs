@@ -37,6 +37,11 @@ main = do
                         <> value Jdk9
                         <> help "Target JDK verion"
                     )
+                <*> switch
+                    ( long "do-translate"
+                        <> short 't'
+                        <> help "Translate "
+                    )
             )
             empty
     lo <- logOptionsHandle stderr options.optionsVerbose

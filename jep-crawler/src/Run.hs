@@ -14,8 +14,9 @@ run = do
     env <- ask
     let targetJdk = env.appOptions.optionsJdk
         outputFilePath = env.appOptions.optionsOutputFilePath
+        doTranslate = env.appOptions.optionsDoTranslate
 
     urlSourceOf targetJdk
         >>= jepContents targetJdk
-        >>= translate2Ja
+        >>= \jeps -> (if doTranslate then translate2Ja jeps else return jeps)
         >>= writeToCsv outputFilePath

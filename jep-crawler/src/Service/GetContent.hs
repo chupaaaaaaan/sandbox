@@ -1,4 +1,3 @@
-{-# LANGUAGE OverloadedRecordDot #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 
@@ -28,16 +27,26 @@ jepContents jdk urls = do
             Jdk16 -> jepParser
             Jdk17 -> jepParser
 
-    case jdk of
-        Jdk7 -> undefined
-        _ -> fmap join $ forM urls $ \url -> do
-            mJep <- flip scrapeStringLike (parser url) <$> (fetchHtml . parseRequest_ $ T.unpack url)
-            case mJep of
-                Nothing -> error "empty content"
-                Just jep -> return jep
+    fmap join $ forM urls $ \url -> do
+        mJep <- flip scrapeStringLike (parser url) <$> (fetchHtml . parseRequest_ $ T.unpack url)
+        case mJep of
+            Nothing -> error "empty content"
+            Just jep -> return jep
 
 jsrParser :: Text -> Scraper Text [Jep]
-jsrParser = undefined
+jsrParser url = fmap join $ chroot ("div" @: [hasClass "feature-details"]) $ do
+    chroots ("div" @: [hasClass "group"]) $ do
+        chroots ("div" @: [hasClass "feature"]) $ do
+            title <- text ("div" @: [hasClass "title"])
+            summary <- text ("div" @: [hasClass "summary"])
+            return
+                Jep
+                    { title = title
+                    , url = url
+                    , component = ""
+                    , summary = [summary]
+                    , summaryJa = []
+                    }
 
 jepParser :: Text -> Scraper Text [Jep]
 jepParser url = chroot ("div" @: ["id" @= "main"]) $ do
