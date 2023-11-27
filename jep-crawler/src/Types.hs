@@ -1,4 +1,3 @@
-{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE OverloadedRecordDot #-}
@@ -12,12 +11,8 @@ module Types (
     Options (..),
     Jep (..),
     Jdk (..),
-    DeepLRequest (..),
-    DeepLResponse (..),
-    Translation (..),
 ) where
 
-import Data.Aeson (FromJSON, ToJSON)
 import Data.Csv (ToField (toField), ToRecord (toRecord), record)
 import RIO
 import RIO.Process
@@ -63,23 +58,3 @@ instance ToRecord Jep where
 
 data Jdk = Jdk7 | Jdk8 | Jdk9 | Jdk10 | Jdk11 | Jdk12 | Jdk13 | Jdk14 | Jdk15 | Jdk16 | Jdk17
     deriving (Read)
-
-data DeepLRequest = DeepLRequest
-    { text :: [Text]
-    , target_lang :: Text
-    }
-    deriving (Show, Generic)
-
-instance ToJSON DeepLRequest
-
-newtype DeepLResponse = DeepLResponse {translations :: [Translation]}
-    deriving (Show, Generic)
-
-data Translation = Translation
-    { detected_source_language :: Text
-    , text :: Text
-    }
-    deriving (Show, Generic)
-
-instance FromJSON DeepLResponse
-instance FromJSON Translation

@@ -11,8 +11,5 @@ import Util
 
 translate2Ja :: (HasLogFunc env, HasProcessContext env) => [Jep] -> RIO env [Jep]
 translate2Ja jeps = forM jeps $ \jep -> do
-    deeplResponseBody <- translate "JA" jep.summary
-    let summaryJa = (\t -> t.text) <$> deeplResponseBody.translations
+    summaryJa <- translate "JA" jep.summary
     return jep{summaryJa = summaryJa}
-    
-
