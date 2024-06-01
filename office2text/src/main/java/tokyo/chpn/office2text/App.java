@@ -1,4 +1,4 @@
-package tokyo.chpn;
+package tokyo.chpn.office2text;
 
 import java.util.Set;
 import java.util.function.Predicate;

@@ -1,4 +1,4 @@
-package tokyo.chpn.searcher;
+package tokyo.chpn.office2text.extract;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
