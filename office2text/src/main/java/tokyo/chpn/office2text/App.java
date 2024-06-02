@@ -30,11 +30,11 @@ public class App {
 
         Path targetFilePath = Paths.get(args[0]);
         List<Condition> conditions = new ArrayList<>() {{
-            add(Condition.createCaseInsensitiveWordMatch("JSP", "jsp", "\\w\\.jsp"));
+            add(Condition.createCaseInsensitiveWordMatch("JSP", "jsp", "\\.jsp", "jsp\\.\\w", "jsp:include", "<jsp:", "`jsp", "<jsp", "</jsp", "http://java\\.sun\\.com/jsp"));
             add(Condition.createCaseInsensitiveWordMatch("JSF", "jsf"));
             add(Condition.createCaseInsensitiveWordMatch("JASPIC", "jaspic"));
             add(Condition.createCaseInsensitiveWordMatch("JACC", "jacc"));
-            add(Condition.createCaseInsensitiveWordMatch("JMS", "jms"));
+            add(Condition.createCaseInsensitiveWordMatch("JMS", "jms", "javax\\.jms\\."));
             add(Condition.createCaseInsensitiveWordMatch("JPA", "jpa"));
             add(Condition.createCaseInsensitiveWordMatch("JTA", "jta"));
             add(Condition.createCaseInsensitiveWordMatch("JBatch", "jbatch"));
@@ -48,8 +48,9 @@ public class App {
             add(Condition.createCaseInsensitiveWordMatch("JAX-WS", "jax-ws"));
             add(Condition.createCaseInsensitiveWordMatch("JAX-WS", "jax-ws"));
             add(Condition.createCaseInsensitiveWordMatch("JAX-RS", "jax-rs"));
-            add(Condition.createCaseInsensitiveWordMatch("JSTL", "jstl"));
+            add(Condition.createCaseInsensitiveWordMatch("JSTL", "jstl", "http://java\\.sun\\.com/jsp/jstl"));
             add(Condition.createCaseInsensitiveWordMatch("CDI", "cdi"));
+            add(Condition.createCaseInsensitiveWordMatch("java.sun.com", "java\\.sun\\.com"));
         }};
 
         List<Greppable> extracted = switch (FilenameUtils.getExtension(targetFilePath.toString())) {

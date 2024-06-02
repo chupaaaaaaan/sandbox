@@ -8,14 +8,14 @@ import java.util.regex.Pattern;
 public record Condition(String description, Predicate<String> predicate) {
 
     public static Condition createCaseInsensitiveWordMatch(String description, String word, String... otherExcludePattern) {
-        Pattern pattern1 = Pattern.compile(Pattern.quote(word), Pattern.CASE_INSENSITIVE);
+        Pattern pattern1 = Pattern.compile(word, Pattern.CASE_INSENSITIVE);
         Pattern pattern2 = Pattern.compile(makeExcludePattern(word, otherExcludePattern), Pattern.CASE_INSENSITIVE);
 
         return new Condition(description, l -> countMatches(pattern1, l) != countMatches(pattern2, l));
     }
 
     public static Condition createWordMatch(String description, String word, String... otherExcludePatterns) {
-        Pattern pattern1 = Pattern.compile(Pattern.quote(word));
+        Pattern pattern1 = Pattern.compile(word);
         Pattern pattern2 = Pattern.compile(makeExcludePattern(word, otherExcludePatterns));
 
         return new Condition(description, l -> countMatches(pattern1, l) != countMatches(pattern2, l));
@@ -23,8 +23,8 @@ public record Condition(String description, Predicate<String> predicate) {
 
     private static String makeExcludePattern(String word, String... otherExcludePatterns) {
         StringJoiner excludePattern = new StringJoiner("|");
-        excludePattern.add("\\w" + Pattern.quote(word));
-        excludePattern.add(Pattern.quote(word) + "\\w");
+        excludePattern.add("\\w" + word);
+        excludePattern.add(word + "\\w");
         for (String pattern : otherExcludePatterns) {
             if(!pattern.contains(word)) throw new IllegalArgumentException("otherExcludePattern must contain " + word);
             excludePattern.add(pattern);
