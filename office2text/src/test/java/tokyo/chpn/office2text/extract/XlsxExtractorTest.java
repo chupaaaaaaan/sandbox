@@ -46,7 +46,7 @@ class XlsxExtractorTest {
         assertNotNull(targetFileURL);
         Path path = Paths.get(targetFileURL.toURI());
 
-        Condition condition = Condition.createCaseInsensitiveWordMatchCondition("Nablarch", "Nablarch", "nablarch\\.github\\.io", "nablarch-example-web");
+        Condition condition = Condition.createCaseInsensitiveWordMatch("Nablarch", "Nablarch", "nablarch\\.github\\.io", "nablarch-example-web");
 //        Condition condition = Condition.createPhraseMatchCondition("Nablarch未提供", "Nablarch未提供");
 
         List<Filtered> result =  XlsxExtractor.extract(path).stream().filter(TextFilter.filter(condition)).map(g -> new Filtered(condition, g)).toList();

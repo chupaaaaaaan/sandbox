@@ -7,14 +7,14 @@ import java.util.regex.Pattern;
 
 public record Condition(String description, Predicate<String> predicate) {
 
-    public static Condition createCaseInsensitiveWordMatchCondition(String description, String word, String... otherExcludePattern) {
+    public static Condition createCaseInsensitiveWordMatch(String description, String word, String... otherExcludePattern) {
         Pattern pattern1 = Pattern.compile(Pattern.quote(word), Pattern.CASE_INSENSITIVE);
         Pattern pattern2 = Pattern.compile(makeExcludePattern(word, otherExcludePattern), Pattern.CASE_INSENSITIVE);
 
         return new Condition(description, l -> countMatches(pattern1, l) != countMatches(pattern2, l));
     }
 
-    public static Condition createMatchCondition(String description, String word, String... otherExcludePatterns) {
+    public static Condition createWordMatch(String description, String word, String... otherExcludePatterns) {
         Pattern pattern1 = Pattern.compile(Pattern.quote(word));
         Pattern pattern2 = Pattern.compile(makeExcludePattern(word, otherExcludePatterns));
 
@@ -26,12 +26,13 @@ public record Condition(String description, Predicate<String> predicate) {
         excludePattern.add("\\w" + Pattern.quote(word));
         excludePattern.add(Pattern.quote(word) + "\\w");
         for (String pattern : otherExcludePatterns) {
+            if(!pattern.contains(word)) throw new IllegalArgumentException("otherExcludePattern must contain " + word);
             excludePattern.add(pattern);
         }
         return excludePattern.toString();
     }
 
-    public static Condition createPhraseMatchCondition(String description, String phrase) {
+    public static Condition createPhraseMatch(String description, String phrase) {
         Pattern pattern = Pattern.compile(Pattern.quote(phrase));
         return new Condition(description, l -> pattern.matcher(l).matches());
     }

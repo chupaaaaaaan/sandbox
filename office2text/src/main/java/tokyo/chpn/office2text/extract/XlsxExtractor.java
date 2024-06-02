@@ -23,7 +23,8 @@ public final class XlsxExtractor {
 
         List<Greppable> targetStrings = new ArrayList<>();
 
-        try (OPCPackage pkg = OPCPackage.open(targetFilePath.toFile()); Workbook workbook = new XSSFWorkbook(pkg)) {
+        try (OPCPackage pkg = OPCPackage.open(targetFilePath.toFile());
+             Workbook workbook = new XSSFWorkbook(pkg)) {
 
             DataFormatter formatter = new DataFormatter();
             FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
