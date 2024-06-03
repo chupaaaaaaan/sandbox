@@ -46,10 +46,10 @@ public class App {
             add(Condition.createCaseInsensitiveWordMatch("JSON-B", "json-b"));
             add(Condition.createCaseInsensitiveWordMatch("JSON-P", "json-p"));
             add(Condition.createCaseInsensitiveWordMatch("JAX-WS", "jax-ws"));
-            add(Condition.createCaseInsensitiveWordMatch("JAX-WS", "jax-ws"));
             add(Condition.createCaseInsensitiveWordMatch("JAX-RS", "jax-rs"));
             add(Condition.createCaseInsensitiveWordMatch("JSTL", "jstl", "http://java\\.sun\\.com/jsp/jstl"));
             add(Condition.createCaseInsensitiveWordMatch("CDI", "cdi"));
+            add(Condition.createCaseInsensitiveWordMatch("JSR352", "jsr352"));
             add(Condition.createCaseInsensitiveWordMatch("java.sun.com", "java\\.sun\\.com"));
         }};
 
