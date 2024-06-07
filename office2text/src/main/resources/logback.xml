@@ -8,7 +8,7 @@
 
     <logger name="tokyo.chpn.office2text" level="info"/>
 
-    <root level="warn">
+    <root level="error">
         <appender-ref ref="STDOUT" />
     </root>
 </configuration>
