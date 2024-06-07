@@ -65,9 +65,9 @@ public class App {
             add(Condition.createCaseInsensitiveWordMatch("java.sun.com", "java\\.sun\\.com"));
         }};
 
-        try (BufferedWriter fileNameList = Files.newBufferedWriter(Paths.get("./fileNameList.txt"), StandardOpenOption.APPEND, StandardOpenOption.CREATE);
-             BufferedWriter detailsList = Files.newBufferedWriter(Paths.get("./detailsList.txt"), StandardOpenOption.APPEND, StandardOpenOption.CREATE);
-             BufferedWriter errorList = Files.newBufferedWriter(Paths.get("./errorList.txt"), StandardOpenOption.APPEND, StandardOpenOption.CREATE)) {
+        try (BufferedWriter fileNameList = Files.newBufferedWriter(Paths.get("./fileNameList.txt"), StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+             BufferedWriter detailsList = Files.newBufferedWriter(Paths.get("./detailsList.txt"), StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+             BufferedWriter errorList = Files.newBufferedWriter(Paths.get("./errorList.txt"), StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
 
             List<String> targetFileNames = Files.readAllLines(Paths.get(args[0]));
 
