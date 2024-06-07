@@ -36,3 +36,7 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+detailsList.txt
+errorList.txt
+fileNameList.txt
