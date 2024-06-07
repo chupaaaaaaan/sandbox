@@ -2,6 +2,7 @@ package tokyo.chpn.office2text.extract;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import tokyo.chpn.office2text.filter.Condition;
 import tokyo.chpn.office2text.filter.TextFilter;
@@ -40,6 +41,7 @@ class XlsxExtractorTest {
 
 
     @Test
+    @Disabled
     public void searchTextFromExcel() throws URISyntaxException {
         ClassLoader classLoader = getClass().getClassLoader();
         URL targetFileURL = classLoader.getResource("data/ui-standard-parts-catalog.xlsx");

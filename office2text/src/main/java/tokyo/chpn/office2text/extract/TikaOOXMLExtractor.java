@@ -17,9 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public final class DocxExtractor {
+public final class TikaOOXMLExtractor {
 
-    private DocxExtractor() {}
+    private TikaOOXMLExtractor() {}
 
     public static List<Greppable> extract(Path targetFilePath) {
 
