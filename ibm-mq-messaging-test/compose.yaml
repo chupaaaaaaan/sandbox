@@ -2,28 +2,20 @@ services:
   mq-send:
     image: ibmmq-test/send
     build: ./send
-    ports:
-      - "443:8043"
+    environment:
+      - LICENSE=accept
     networks:
       - mq-p2p
 
   mq-receive:
     image: ibmmq-test/receive
     build: ./receive
-    volumes:
-      - db-data:/etc/data
+    environment:
+      - LICENSE=accept
+    expose:
+      - "1415"
     networks:
       - mq-p2p
 
-volumes:
-  db-data:
-    driver: flocker
-    driver_opts:
-      size: "10GiB"
-
-configs:
-  httpd-config:
-    external: true
-
 networks:
-  mq-p2p: {}
+  mq-p2p:

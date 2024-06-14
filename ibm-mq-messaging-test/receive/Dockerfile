@@ -14,5 +14,6 @@ RUN --mount=type=cache,target=/root/.m2 \
 FROM icr.io/ibm-messaging/mq:9.3.0.17-r2
 
 COPY --from=builder /work/lib /opt/receiveapp/lib
+COPY --from=builder /work/h2 /opt/receiveapp/h2
 COPY --from=builder /work/nablarch-example-mom-delayed-receive-5u24.jar /opt/receiveapp/
 
