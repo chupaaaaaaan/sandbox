@@ -24,7 +24,7 @@ import org.apache.commons.cli.ParseException;
 public class App {
     public static void main(String[] args) {
 
-        Option s = Option.builder("s").longOpt("send").build();
+        Option s = Option.builder("s").longOpt("send")   .build();
         Option r = Option.builder("r").longOpt("receive").build();
 
         OptionGroup optionGroup = new OptionGroup();
@@ -32,21 +32,22 @@ public class App {
         optionGroup.addOption(r);
         optionGroup.setRequired(true);
 
-        Option m = Option.builder("m").required().hasArg().longOpt("qmanager").build();
-        Option q = Option.builder("q").required().hasArg().longOpt("queue").build();
+        Option qm = Option.builder("qm").required().hasArg().longOpt("qmanager").build();
+        Option q  = Option.builder("q") .required().hasArg().longOpt("queue")   .build();
+        Option m  = Option.builder("m")            .hasArg().longOpt("message") .build();
 
         Options options = new Options();
         options.addOptionGroup(optionGroup);
-        options.addOption(m);
+        options.addOption(qm);
         options.addOption(q);
+        options.addOption(m);
 
         CommandLineParser parser = new DefaultParser();
 
         try {
             CommandLine cmd = parser.parse(options, args);
-
             // キュー・マネージャーと接続
-            MQQueueManager queueManager = new MQQueueManager(cmd.getOptionValue(m));
+            MQQueueManager queueManager = new MQQueueManager(cmd.getOptionValue(qm));
 
             String queueName = cmd.getOptionValue(q);
             if (cmd.hasOption(s)) {
@@ -55,7 +56,7 @@ public class App {
                 MQQueue queue = queueManager.accessQueue(queueName, CMQC.MQOO_OUTPUT);
 
                 // メッセージを作成
-                String message = "Hello, IBM MQ!";
+                String message = cmd.hasOption(m) ? cmd.getOptionValue(m) : "Hello, IBM MQ!";
                 MQMessage mqMessage = new MQMessage();
                 mqMessage.writeString(message);
 
@@ -81,7 +82,7 @@ public class App {
 
                 String receivedMessage = mqMessage.readStringOfByteLength(mqMessage.getDataLength());
 
-                System.out.print("Received message:");
+                System.out.println("Received message:");
                 System.out.println(receivedMessage);
 
             } else {
