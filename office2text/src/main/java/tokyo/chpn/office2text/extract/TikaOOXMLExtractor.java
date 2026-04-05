@@ -19,7 +19,8 @@ import java.util.Scanner;
 
 public final class TikaOOXMLExtractor {
 
-    private TikaOOXMLExtractor() {}
+    private TikaOOXMLExtractor() {
+    }
 
     public static List<Greppable> extract(Path targetFilePath) {
 
@@ -33,7 +34,7 @@ public final class TikaOOXMLExtractor {
             OOXMLParser parser = new OOXMLParser();
             parser.parse(is, handler, metadata, context);
 
-            try (Scanner scanner = new Scanner(handler.toString())){
+            try (Scanner scanner = new Scanner(handler.toString())) {
                 while (scanner.hasNextLine()) {
                     String line = scanner.nextLine();
                     if (line.trim().isEmpty()) continue;
