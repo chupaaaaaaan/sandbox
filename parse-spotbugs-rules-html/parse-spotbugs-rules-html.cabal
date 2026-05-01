@@ -1,0 +1,37 @@
+cabal-version:   3.12
+name:            parse-spotbugs-rules-html
+version:         0.1.0.0
+license:         NONE
+author:          Takayuki Uchida
+maintainer:      jacobitebeerlove@gmail.com
+build-type:      Simple
+extra-doc-files: CHANGELOG.md
+
+common warnings
+    ghc-options: -Wall
+
+common depends
+    build-depends: base ^>=4.19.2.0
+                 , scalpel 
+                 , text
+                 , http-client
+                 , lucid
+                 , http-conduit
+                 , bytestring
+                 , tagsoup
+
+
+
+
+executable parse-spotbugs-rules-html
+    import:           warnings, depends
+    main-is:          MainSpotBugs.hs
+    hs-source-dirs:   app
+    default-language: Haskell2010
+
+executable parse-findbugs-rules-html
+    import:           warnings, depends
+    main-is:          MainFindBugs.hs
+    hs-source-dirs:   app
+    default-language: Haskell2010
+    
