@@ -26,7 +26,6 @@ module Main where
 import qualified Data.ByteString.Lazy as BL
 import qualified Data.Csv as C
 import qualified Data.Map.Strict as M
-import qualified Data.Set as S
 import qualified Data.Text as T
 import qualified Data.Vector as V
 import System.Environment
@@ -52,16 +51,6 @@ data InvCSModule = InvCSModule
     }
     deriving (Show, Eq, Ord)
 
-type BugCollection = M.Map T.Text (S.Set BugInstance)
-data BugInstance = BugInstance
-    { type_ :: !T.Text
-    , priority :: !T.Text
-    , category :: !T.Text
-    , message :: !T.Text
-    , lineNumber :: !T.Text
-    }
-    deriving (Show, Eq, Ord)
-
 toCSModule :: TX.Document -> CSModule
 toCSModule = go . fromDocument
     where reqAttr :: Cursor -> TX.Name -> T.Text
@@ -74,8 +63,6 @@ toCSModule = go . fromDocument
                        children = [ go child
                                   | child <- cur $/ element "module" ]
                    in CSModule name properties children
-
-
 
 toInvRoot :: CSModule -> InvCSModule
 toInvRoot csm = InvCSModule csm.name csm.properties Nothing
@@ -100,18 +87,20 @@ toInvCSModule csm = toInvRoot csm : flip fix csm \go v -> do
 
 toRecords :: InvCSModule -> [C.NamedRecord]
 toRecords InvCSModule{..} =
-    [C.namedRecord [ "name" C..= name
-                   , "parent" C..= pn
+    [C.namedRecord [ "moduleName" C..= name
+                   , "parentName" C..= pn
                    , "propertyName" C..= propName
                    , "propertyValue" C..= propVal
                    ]
     | pn <- [fromMaybe "" parentName]
-    , (propName, propVal) <- M.toAscList properties
+    , (propName, propVal) <- case M.toAscList properties of
+                                 [] -> [("", "")]
+                                 xs -> xs
     ]
 
 header :: C.Header
-header = V.fromList [ "name"
-                    , "parent"
+header = V.fromList [ "moduleName"
+                    , "parentName"
                     , "propertyName"
                     , "propertyValue"
                     ]
