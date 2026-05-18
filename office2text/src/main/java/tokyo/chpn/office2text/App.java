@@ -9,9 +9,7 @@ import tokyo.chpn.office2text.core.ExtractedText;
 import tokyo.chpn.office2text.core.ExtractionError;
 import tokyo.chpn.office2text.extract.XlsxExtractor;
 import tokyo.chpn.office2text.io.JacksonJsonLineWriter;
-import tools.jackson.core.StreamWriteFeature;
-import tools.jackson.databind.SerializationFeature;
-import tools.jackson.databind.json.JsonMapper;
+import tokyo.chpn.office2text.io.ObjectMapperFactory;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -30,11 +28,9 @@ public class App {
         try {
             exitCode = new App().run(args);
         } catch (IOException e) {
-            e.printStackTrace();
             LOGGER.error("I/O failure: {}", e.getMessage());
             exitCode = 1;
         } catch (Exception e) {
-            e.printStackTrace();
             LOGGER.error("Unexpected error: {}", e.getMessage());
             exitCode = 1;
         }
@@ -51,10 +47,7 @@ public class App {
         String sourceFile = args[0];
         var file = Path.of(sourceFile);
 
-        var objectMapper = JsonMapper.builder()
-                .disable(SerializationFeature.INDENT_OUTPUT)
-                .disable(StreamWriteFeature.AUTO_CLOSE_TARGET)
-                .build();
+        var objectMapper = ObjectMapperFactory.getInstance();
 
         var outWriter = new JacksonJsonLineWriter<ExtractedText>(objectMapper, new OutputStreamWriter(System.out));
         var errWriter = new JacksonJsonLineWriter<ExtractionError>(objectMapper, new OutputStreamWriter(System.err));

@@ -2,7 +2,13 @@ package tokyo.chpn.office2text.extract;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.FormulaError;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import tokyo.chpn.office2text.core.*;
 
@@ -27,11 +33,10 @@ public final class XlsxExtractor implements Extractor {
         } catch (InvalidFormatException e) {
             ExtractionError extractionError = ExtractionError.of(sourceFile,
                     documentType,
-                    Stages.LOAD_DOCUMENT,
+                    Stages.LOAD_WORKBOOK,
                     null,
                     null,
-                    "Failed to load file.",
-                    e,
+                    "Failed to load workbook.",
                     null);
             err.accept(extractionError);
         }
@@ -49,7 +54,7 @@ public final class XlsxExtractor implements Extractor {
                 ExtractedText extractedText;
                 try {
                     String cellValue = extractCell(cell, formatter, evaluator);
-                    if (cellValue.trim().isEmpty()) continue;
+                    if (!Texts.shouldEmit(cellValue)) continue;
                     extractedText = ExtractedText.of(sourceFile,
                             documentType,
                             PartTypes.CELL,
@@ -65,7 +70,6 @@ public final class XlsxExtractor implements Extractor {
                             sheet.getSheetName(),
                             cell.getAddress().toString(),
                             "Failed to extract cell.",
-                            e,
                             null);
                     err.accept(extractionError);
                 }

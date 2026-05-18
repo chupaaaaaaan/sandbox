@@ -3,10 +3,7 @@ package tokyo.chpn.office2text.io;
 import java.io.IOException;
 import java.io.Writer;
 
-import tools.jackson.core.StreamWriteFeature;
 import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.SerializationFeature;
-import tools.jackson.databind.json.JsonMapper;
 
 public final class JacksonJsonLineWriter<T> {
     private final ObjectMapper objectMapper;

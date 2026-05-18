@@ -10,7 +10,6 @@ public record ExtractionError(
         String containerName,
         String location,
         String message,
-        String cause,
         Map<String, Object> metadata) {
 
     public ExtractionError {
@@ -28,7 +27,6 @@ public record ExtractionError(
             String containerName,
             String location,
             String message,
-            Throwable cause,
             Map<String, Object> metadata) {
         return new ExtractionError(
                 sourceFile,
@@ -37,7 +35,6 @@ public record ExtractionError(
                 containerName,
                 location,
                 message,
-                cause == null ? null : cause.getClass().getName(),
                 metadata);
     }
 
@@ -45,11 +42,10 @@ public record ExtractionError(
         return new ExtractionError(
                 sourceFile,
                 "unknown",
-                "detect-format",
+                Stages.DETECT_FORMAT,
                 null,
                 null,
                 "Unsupported file type",
-                null,
                 Map.of());
     }
 }
