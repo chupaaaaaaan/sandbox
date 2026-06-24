@@ -14,14 +14,14 @@ Office ファイルからテキストを抽出し、構造を持った JSON Line
 
 ### 対応
 
-- xlsx
-- xlsm
+* xlsx
+* xlsm
 
 ### 非対応
 
-- txt
-- csv
-- その他すべての非 Office ファイル
+* txt
+* csv
+* その他すべての非 Office ファイル
 
 非対応ファイルはエラーとする。
 
@@ -31,9 +31,9 @@ Office ファイルからテキストを抽出し、構造を持った JSON Line
 
 ### 3.1 形式
 
-- JSON Lines
-- 1 行 = 1 レコード
-- pretty print なし
+* JSON Lines
+* 1 行 = 1 レコード
+* pretty print なし
 
 ---
 
@@ -41,17 +41,19 @@ Office ファイルからテキストを抽出し、構造を持った JSON Line
 
 フィールド:
 
-- `source_file`
-- `document_type`
-- `part_type`
-- `container_name`
-- `location`
-- `text`
-- `metadata`
+* `source_file`
+* `document_type`
+* `part_type`
+* `container_name`
+* `location`
+* `text`
+* `metadata`
 
 例:
 
-    {"source_file":"sample.xlsx","document_type":"xlsx","part_type":"cell","container_name":"Sheet1","location":"A1","text":"hello","metadata":{}}
+```
+{"source_file":"sample.xlsx","document_type":"xlsx","part_type":"cell","container_name":"Sheet1","location":"A1","text":"hello","metadata":{}}
+```
 
 ---
 
@@ -59,25 +61,27 @@ Office ファイルからテキストを抽出し、構造を持った JSON Line
 
 フィールド:
 
-- `source_file`
-- `document_type`
-- `stage`
-- `container_name`
-- `location`
-- `message`
-- `metadata`
+* `source_file`
+* `document_type`
+* `stage`
+* `container_name`
+* `location`
+* `message`
+* `metadata`
 
 例:
 
-    {"source_file":"sample.xlsx","document_type":"xlsx","stage":"extract-cell","container_name":"Sheet1","location":"A1","message":"Failed to extract cell.","metadata":{}}
+```
+{"source_file":"sample.xlsx","document_type":"xlsx","stage":"extract-cell","container_name":"Sheet1","location":"A1","message":"Failed to extract cell.","metadata":{}}
+```
 
 ---
 
 ### 3.4 JSON 方針
 
-- キー順序は固定
-- `null` は省略せず出力
-- `metadata` は必ず出力（空の場合は `{}`）
+* キー順序は固定
+* `null` は省略せず出力
+* `metadata` は必ず出力（空の場合は `{}`）
 
 ---
 
@@ -85,14 +89,14 @@ Office ファイルからテキストを抽出し、構造を持った JSON Line
 
 ### 現在
 
-- `cell`
+* `cell`
 
 ### 将来予定
 
-- `comment`
-- `shape`
-- `paragraph`
-- `table_cell`
+* `comment`
+* `shape`
+* `paragraph`
+* `table_cell`
 
 ---
 
@@ -100,12 +104,12 @@ Office ファイルからテキストを抽出し、構造を持った JSON Line
 
 ### 共通
 
-- `detect-format`
+* `detect-format`
 
 ### Excel
 
-- `load-workbook`
-- `extract-cell`
+* `load-workbook`
+* `extract-cell`
 
 （`comment` / `shape` は将来追加）
 
@@ -115,51 +119,53 @@ Office ファイルからテキストを抽出し、構造を持った JSON Line
 
 ### Excel
 
-- セル: `A1`
+* セル: `A1`
 
 将来:
 
-- コメント: `comment:B2`
-- 図形: `shape:1`
-- グループ図形: `shape:1/child:2`
+* コメント: `comment:B2`
+* 図形: `shape:1`
+* グループ図形: `shape:1/child:2`
 
 ---
 
 ## 7. `container_name`
 
-- Excel: シート名
+* Excel: シート名
 
 ---
 
 ## 8. `text`
 
-- 表示文字列を出力
-  - 数式は計算結果を出力
-- 空文字または空白のみの場合は出力しない
-- trim は行わない
+* 表示文字列を出力
+
+  * 数式は計算結果を出力
+* 空文字または空白のみの場合は出力しない
+* trim は行わない
 
 ---
 
 ## 9. `metadata`
 
-- 常に出力
-- フェーズ1では空 object
+* 常に出力
+* フェーズ1では空 object
 
 将来:
 
-- `comment`: `author`
-- `shape`: `object_type`, `object_name`, `object_id`
-- `cell`: `formula` 等
+* `comment`: `author`
+* `shape`: `object_type`, `object_name`, `object_id`
+* `cell`: `formula` 等
 
 ---
 
 ## 10. フォーマット判定
 
-- 拡張子ベース
-- xlsx / xlsm のみ対応
+* 拡張子ベース
+* xlsx / xlsm のみ対応
 
 将来:
-- OOXML 内容確認
+
+* OOXML 内容確認
 
 ---
 
@@ -169,10 +175,10 @@ Office ファイルからテキストを抽出し、構造を持った JSON Line
 
 #### セル
 
-- 行 → 列 の順で走査
-- `DataFormatter` + `FormulaEvaluator` を使用
-- 表示文字列を抽出
-- blank はスキップ
+* 行 → 列 の順で走査
+* `DataFormatter` + `FormulaEvaluator` を使用
+* 表示文字列を抽出
+* blank はスキップ
 
 ---
 
@@ -180,45 +186,71 @@ Office ファイルからテキストを抽出し、構造を持った JSON Line
 
 ### 抽出エラー
 
-- 標準エラーに出力
-- 処理は継続
+* 標準エラーに出力
+* 同一ファイル内の処理は継続
+
+### ファイル単位エラー
+
+* 非対応形式などのエラーは標準エラーに出力
+* 他の入力ファイルの処理は継続
 
 ### I/O エラー
 
-- `IOException` として上位に伝播
-- ツールの実行失敗として扱う
+* `IOException` として上位に伝播
+* ツールの実行失敗として扱う
 
 ---
 
 ## 13. 終了コード
 
-- `0`: エラーなし
-- `1`: エラーあり
-- `2`: 引数不正
+* `0`: エラーなし
+* `1`: エラーあり
+* `2`: 引数不正
 
 ---
 
 ## 14. CLI 仕様
 
-- 入力は単一ファイルのみ
-- ディレクトリは未対応
+### 入力
+
+* 1 個以上のファイルを受け付ける
+* 入力順に処理する
+* ディレクトリは未対応
+
+例:
+
+```
+java -jar office2text.jar sample.xlsx
+
+java -jar office2text.jar file1.xlsx file2.xlsx file3.xlsm
+```
+
+### 出力
+
+* 正常系は stdout
+* エラーは stderr
+
+### 配布形式
+
+* 実行可能 jar
+* Java Runtime Environment がインストールされた環境で実行可能
 
 ---
 
 ## 15. 実装方針
 
-- 抽出は逐次処理（streaming）
-- Consumer（RecordSink）に流す設計
-- stdout: 正常系
-- stderr: エラー
+* 抽出は逐次処理（streaming）
+* Consumer（RecordSink）に流す設計
+* stdout: 正常系
+* stderr: エラー
 
 ---
 
 ## 16. 将来拡張
 
-- Excel comment
-- Excel shape
-- Word 対応
-- 複数ファイル入力
-- ディレクトリ再帰
-- 入力フォーマット拡張
+* Excel comment
+* Excel shape
+* Word 対応
+* ディレクトリ再帰
+* 出力先指定
+* 入力フォーマット拡張

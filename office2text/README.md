@@ -2,18 +2,19 @@
 
 Office ファイルから文字列を抽出し、JSON Lines 形式で出力する CLI ツール。
 
-本ツールは「抽出専用」に特化しており、フィルタリングは行わない。  
+本ツールは「抽出専用」に特化しており、フィルタリングは行わない。
 抽出結果は `jq`, `grep`, `rg` 等の外部ツールで処理することを前提とする。
 
 ---
 
 ## 特徴
 
-- Office ファイルからテキストを抽出
-- JSON Lines (1 行 1 レコード) で出力
-- stdout に正常系、stderr にエラーを出力
-- 空文字・空白のみの要素は出力しない
-- シンプルでパイプ処理に適した設計
+* Office ファイルからテキストを抽出
+* JSON Lines (1 行 1 レコード) で出力
+* stdout に正常系、 stderr にエラーを出力
+* 空文字・空白のみの要素は出力しない
+* 複数ファイルを一括処理可能
+* シンプルでパイプ処理に適した設計
 
 ---
 
@@ -21,18 +22,18 @@ Office ファイルから文字列を抽出し、JSON Lines 形式で出力す�
 
 ### 対応形式
 
-- `.xlsx`
-- `.xlsm`
+* `.xlsx`
+* `.xlsm`
 
 ### 抽出対象
 
-- セル (`cell`) の表示文字列
+* セル (`cell`) の表示文字列
 
 ### 未実装（今後対応予定）
 
-- Excel コメント (`comment`)
-- Excel 図形 (`shape`)
-- Word (`.docx`)
+* Excel コメント (`comment`)
+* Excel 図形 (`shape`)
+* Word (`.docx`)
 
 ---
 
@@ -40,15 +41,37 @@ Office ファイルから文字列を抽出し、JSON Lines 形式で出力す�
 
 Maven を使用
 
-    mvn package
+```
+mvn clean package
+```
+
+ビルド後、以下の実行可能 jar が生成される。
+
+```
+target/office2text.jar
+```
 
 ---
 
 ## 実行
 
-exec-maven-plugin を使用する場合
+### 実行可能 jar
 
-    mvn exec:java -Dexec.args="sample.xlsx"
+```
+java -jar target/office2text.jar sample.xlsx
+```
+
+### 複数ファイル
+
+```
+java -jar target/office2text.jar file1.xlsx file2.xlsx file3.xlsm
+```
+
+### シェル展開
+
+```
+java -jar target/office2text.jar *.xlsx
+```
 
 ---
 
@@ -60,7 +83,9 @@ exec-maven-plugin を使用する場合
 
 例:
 
-    {"source_file":"sample.xlsx","document_type":"xlsx","part_type":"cell","container_name":"Sheet1","location":"A1","text":"hello","metadata":{}}
+```
+{"source_file":"sample.xlsx","document_type":"xlsx","part_type":"cell","container_name":"Sheet1","location":"A1","text":"hello","metadata":{}}
+```
 
 ---
 
@@ -68,23 +93,25 @@ exec-maven-plugin を使用する場合
 
 例:
 
-    {"source_file":"sample.txt","document_type":"unknown","stage":"detect-format","container_name":null,"location":null,"message":"Unsupported file type","metadata":{}}
+```
+{"source_file":"sample.txt","document_type":"unknown","stage":"detect-format","container_name":null,"location":null,"message":"Unsupported file type","metadata":{}}
+```
 
 ---
 
 ## 終了コード
 
-- 0: 成功（エラーなし）
-- 1: 抽出中にエラーあり
-- 2: 引数不正
+* 0: 成功（エラーなし）
+* 1: 抽出中にエラーあり
+* 2: 引数不正
 
 ---
 
 ## 制約
 
-- 単一ファイル入力のみ
-- JSON Lines 固定（pretty print なし）
-- 空白のみの要素は出力しない
+* ファイルのみ対応（ディレクトリ未対応）
+* JSON Lines 固定（pretty print なし）
+* 空白のみの要素は出力しない
 
 ---
 
@@ -92,24 +119,37 @@ exec-maven-plugin を使用する場合
 
 xlsx から抽出して grep
 
-    mvn exec:java -Dexec.args="sample.xlsx" | grep hello
+```
+java -jar target/office2text.jar sample.xlsx | grep hello
+```
+
+複数ファイルから抽出して grep
+
+```
+java -jar target/office2text.jar *.xlsx | grep hello
+```
 
 jq で整形
 
-    mvn exec:java -Dexec.args="sample.xlsx" | jq .
+```
+java -jar target/office2text.jar sample.xlsx | jq .
+```
 
 ---
 
 ## 今後の予定
 
-- Excel コメント抽出
-- Excel 図形抽出
-- Word 対応
-- ディレクトリ一括処理
-- 入力形式の拡張
+* Excel コメント抽出
+* Excel 図形抽出
+* Word 対応
+* ディレクトリ一括処理
+* 出力先指定
+* 入力形式の拡張
 
 ---
 
 ## ライセンス
 
-TBD
+MIT License
+
+詳細は LICENSE ファイルを参照。

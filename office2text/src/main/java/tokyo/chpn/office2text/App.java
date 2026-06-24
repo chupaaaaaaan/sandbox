@@ -60,8 +60,7 @@ public class App {
 
     public int run (String[] args) throws IOException {
         if (args.length == 0) {
-//            LOGGER.error("Usage: java -jar office2text.jar <file>");
-            LOGGER.error("Usage: mvn clean compile exec:java -Dexec.args=\"$(printf '%s ' *.xlsx)\"");
+            LOGGER.error("Usage: java -jar office2text.jar <file>");
             return 2;
         }
         ZipSecureFile.setMinInflateRatio(0);
