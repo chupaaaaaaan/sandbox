@@ -74,6 +74,6 @@ public class App {
             errWriter.write(error);
         });
 
-        return hasError.get() ? 0 : 1;
+        return hasError.get() ? 1 : 0;
     }
 }
