@@ -1,7 +1,6 @@
 package tokyo.chpn.office2text;
 
 import org.apache.poi.openxml4j.util.ZipSecureFile;
-import org.apache.tika.detect.Detector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tokyo.chpn.office2text.core.*;
@@ -12,7 +11,7 @@ import tokyo.chpn.office2text.io.ObjectMapperFactory;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.file.Path;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Hello world!
@@ -62,43 +61,44 @@ public class App {
         if (args.length == 0) {
 //            LOGGER.error("Usage: java -jar office2text.jar <file>");
             LOGGER.error("Usage: mvn clean compile exec:java -Dexec.args=\"$(printf '%s ' *.xlsx)\"");
-            System.exit(2);
+            return 2;
         }
         ZipSecureFile.setMinInflateRatio(0);
 
         var hasError = false;
 
         for (String sourceFile : args) {
-            hasError |= processOneFile(sourceFile);
+            var result = processOneFile(sourceFile);
+            hasError |= (result == ProcessResult.FAILURE);
         }
 
         return hasError ? 1 : 0;
     }
 
-    private boolean processOneFile (String sourceFile) throws IOException {
+    private ProcessResult processOneFile (String sourceFile) throws IOException {
 
         var file = Path.of(sourceFile);
 
         var documentTypeOpt = detector.detect(file);
         if (documentTypeOpt.isEmpty()) {
             errWriter.write(ExtractionError.unsupportedFileType(sourceFile));
-            return false;
+            return ProcessResult.FAILURE;
         }
 
         var extractorOpt = registry.get(documentTypeOpt.get());
         if (extractorOpt.isEmpty()) {
             errWriter.write(ExtractionError.unsupportedFileType(sourceFile));
-            return false;
+            return ProcessResult.FAILURE;
         }
 
-        var hasError = new AtomicBoolean(false);
+        AtomicReference<ProcessResult> result = new AtomicReference<>(ProcessResult.SUCCESS);
 
         extractorOpt.get().extract(file, documentTypeOpt.get(), outWriter::write, error -> {
-            hasError.set(true);
+            result.set(ProcessResult.FAILURE);
             errWriter.write(error);
         });
 
-        return !hasError.get();
+        return result.get();
     }
 
 }
