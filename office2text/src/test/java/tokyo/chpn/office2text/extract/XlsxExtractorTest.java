@@ -1,8 +1,7 @@
-package tokyo.chpn.office2text.io;
-
+package tokyo.chpn.office2text.extract;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class JacksonJsonLineWriterTest {
+class XlsxExtractorTest {
     // TODO: テスト書く
 }
