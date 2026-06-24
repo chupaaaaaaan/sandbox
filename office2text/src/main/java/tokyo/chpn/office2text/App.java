@@ -1,12 +1,10 @@
 package tokyo.chpn.office2text;
 
 import org.apache.poi.openxml4j.util.ZipSecureFile;
+import org.apache.tika.detect.Detector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tokyo.chpn.office2text.core.DefaultExtractorRegistry;
-import tokyo.chpn.office2text.core.ExtensionBasedFormatDetector;
-import tokyo.chpn.office2text.core.ExtractedText;
-import tokyo.chpn.office2text.core.ExtractionError;
+import tokyo.chpn.office2text.core.*;
 import tokyo.chpn.office2text.extract.XlsxExtractor;
 import tokyo.chpn.office2text.io.JacksonJsonLineWriter;
 import tokyo.chpn.office2text.io.ObjectMapperFactory;
@@ -23,10 +21,33 @@ public class App {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
 
+    private final FormatDetector detector;
+    private final ExtractorRegistry registry;
+    private final JacksonJsonLineWriter<ExtractedText> outWriter;
+    private final JacksonJsonLineWriter<ExtractionError> errWriter;
+
+    private App (
+            FormatDetector detector,
+            ExtractorRegistry registry,
+            JacksonJsonLineWriter<ExtractedText> outWriter,
+            JacksonJsonLineWriter<ExtractionError> errWriter) {
+        this.detector = detector;
+        this.registry = registry;
+        this.outWriter = outWriter;
+        this.errWriter = errWriter;
+    }
+
     public static void main(String[] args) {
         int exitCode;
         try {
-            exitCode = new App().run(args);
+            var objectMapper = ObjectMapperFactory.getInstance();
+            App app = new App(
+                    new ExtensionBasedFormatDetector(),
+                    new DefaultExtractorRegistry(new XlsxExtractor()),
+                    new JacksonJsonLineWriter<>(objectMapper, new OutputStreamWriter(System.out)),
+                    new JacksonJsonLineWriter<>(objectMapper, new OutputStreamWriter(System.err))
+            );
+            exitCode = app.run(args);
         } catch (IOException e) {
             LOGGER.error("I/O failure: {}", e.getMessage());
             exitCode = 1;
@@ -38,33 +59,36 @@ public class App {
     }
 
     public int run (String[] args) throws IOException {
-        if (args.length != 1) {
-            LOGGER.error("Usage: java -jar office2text.jar <file>");
+        if (args.length == 0) {
+//            LOGGER.error("Usage: java -jar office2text.jar <file>");
+            LOGGER.error("Usage: mvn clean compile exec:java -Dexec.args=\"$(printf '%s ' *.xlsx)\"");
             System.exit(2);
         }
         ZipSecureFile.setMinInflateRatio(0);
 
-        String sourceFile = args[0];
+        var hasError = false;
+
+        for (String sourceFile : args) {
+            hasError |= processOneFile(sourceFile);
+        }
+
+        return hasError ? 1 : 0;
+    }
+
+    private boolean processOneFile (String sourceFile) throws IOException {
+
         var file = Path.of(sourceFile);
-
-        var objectMapper = ObjectMapperFactory.getInstance();
-
-        var outWriter = new JacksonJsonLineWriter<ExtractedText>(objectMapper, new OutputStreamWriter(System.out));
-        var errWriter = new JacksonJsonLineWriter<ExtractionError>(objectMapper, new OutputStreamWriter(System.err));
-
-        var detector = new ExtensionBasedFormatDetector();
-        var registry = new DefaultExtractorRegistry(new XlsxExtractor());
 
         var documentTypeOpt = detector.detect(file);
         if (documentTypeOpt.isEmpty()) {
             errWriter.write(ExtractionError.unsupportedFileType(sourceFile));
-            return 1;
+            return false;
         }
 
         var extractorOpt = registry.get(documentTypeOpt.get());
         if (extractorOpt.isEmpty()) {
             errWriter.write(ExtractionError.unsupportedFileType(sourceFile));
-            return 1;
+            return false;
         }
 
         var hasError = new AtomicBoolean(false);
@@ -74,6 +98,7 @@ public class App {
             errWriter.write(error);
         });
 
-        return hasError.get() ? 1 : 0;
+        return !hasError.get();
     }
+
 }
