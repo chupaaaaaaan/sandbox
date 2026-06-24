@@ -10,6 +10,7 @@ import tokyo.chpn.office2text.io.ObjectMapperFactory;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -43,8 +44,8 @@ public class App {
             App app = new App(
                     new ExtensionBasedFormatDetector(),
                     new DefaultExtractorRegistry(new XlsxExtractor()),
-                    new JacksonJsonLineWriter<>(objectMapper, new OutputStreamWriter(System.out)),
-                    new JacksonJsonLineWriter<>(objectMapper, new OutputStreamWriter(System.err))
+                    new JacksonJsonLineWriter<>(objectMapper, new OutputStreamWriter(System.out, StandardCharsets.UTF_8)),
+                    new JacksonJsonLineWriter<>(objectMapper, new OutputStreamWriter(System.err, StandardCharsets.UTF_8))
             );
             exitCode = app.run(args);
         } catch (IOException e) {
